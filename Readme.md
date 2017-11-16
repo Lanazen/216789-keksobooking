@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Светлана](https://up.htmlacademy.ru/javascript/11/user/216789).
-* Наставник: `Неизвестно`.
+* Наставник: [Александр Большов](https://htmlacademy.ru/profile/id179111).
 
 ---
 
