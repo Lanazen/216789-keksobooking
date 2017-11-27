@@ -40,10 +40,12 @@ var getRandomNumber = function (min, max) {
 // Создание массива случайной длины
 var getRandomArray = function () {
   var randomFeature = [];
-  for (var i = 0; i < getRandomNumber(1, FEATURESOFFER.length - 1); i++) {
-    randomFeature[i] = FEATURESOFFER[getRandomNumber(0, FEATURESOFFER.length - 1)];
+  var featuresOfferCopy = FEATURESOFFER.slice();
+  for (var i = 0; i < getRandomNumber(1, FEATURESOFFER.length + 1); i++) {
+    randomFeature[i] = featuresOfferCopy.splice(getRandomNumber(0, FEATURESOFFER.length - 1), 1);
+    var newArray = featuresOfferCopy.concat(randomFeature[i]);
   }
-  return randomFeature;
+  return newArray;
 };
 
 // Создание массива объектов
