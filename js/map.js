@@ -1,6 +1,5 @@
 'use strict';
 
-/*
 var TITLE_OFFER = [
   'Большая уютная квартира',
   'Маленькая неуютная квартира',
@@ -102,5 +101,31 @@ var generateOfferList = function () {
   }
   return offer;
 };
-console.log(generateOfferList());
-*/
+
+var offerList = generateOfferList();
+
+// Убираем класс у карты
+var mapImage = document.querySelector('.map');
+mapImage.classList.remove('.map--faded');
+
+// Создание меток на карте и заполнение их данными из массива
+var pinTemplate = document.querySelector('template').content.querySelector('.map__pin');
+
+var generatePins = function () {
+  var pinElement = pinTemplate.cloneNode(true);
+  var pinImage = pinElement.querySelector('img');
+  pinElement.appendChild(pinImage);
+  return pinElement;
+};
+
+generatePins(offerList);
+
+var fillMapPins = function () {
+  var fragment = document.createDocumentFragment();
+  offerList.forEach(function () {
+    fragment.appendChild(generatePins(offerList));
+  });
+  pinTemplate.appendChild(fragment);
+};
+
+fillMapPins(offerList);
