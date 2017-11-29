@@ -111,14 +111,27 @@ mapImage.classList.remove('.map--faded');
 // Создание меток на карте и заполнение их данными из массива
 var pinTemplate = document.querySelector('template').content.querySelector('.map__pin');
 
+
+/*
+Функция для создания новых DOM-элементов принимает элемент массива generateOfferList(),
+клонирует из шаблона 'template' ноду с классом '.map__pin' со всем ее содержимым,
+передает данные из массива offer[i] элементам pinElement и pinImage,
+возвращает pinElement с полученными данными.
+*/
 var generatePins = function () {
   var pinElement = pinTemplate.cloneNode(true);
-  var pinImage = pinElement.querySelector('img');
-  pinElement.appendChild(pinImage);
+  // var pinImage = pinElement.querySelector('img');
   return pinElement;
 };
 
 generatePins(offerList);
+
+/*
+Функция для отрисовки сгенерированных ранее DOM-элементов в блок '.map__pins',
+создает фрагмент документа для последующего добавления в него новых нод,
+отрисовывает с помощью цикла каждый элемент, полученный из функции generatePins,
+добавляет сформированный фрагмент в документ.
+*/
 
 var fillMapPins = function () {
   var fragment = document.createDocumentFragment();
