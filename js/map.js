@@ -106,39 +106,29 @@ var offerList = generateOfferList();
 
 // Убираем класс у карты
 var mapImage = document.querySelector('.map');
-mapImage.classList.remove('.map--faded');
+mapImage.classList.remove('map--faded');
 
 // Создание меток на карте и заполнение их данными из массива
 var pinTemplate = document.querySelector('template').content.querySelector('.map__pin');
 
-
-/*
-Функция для создания новых DOM-элементов принимает элемент массива generateOfferList(),
-клонирует из шаблона 'template' ноду с классом '.map__pin' со всем ее содержимым,
-передает данные из массива offer[i] элементам pinElement и pinImage,
-возвращает pinElement с полученными данными.
-*/
-var generatePins = function () {
+var generatePins = function (offer) {
   var pinElement = pinTemplate.cloneNode(true);
-  // var pinImage = pinElement.querySelector('img');
+  var pinImage = pinElement.querySelector('img');
+  pinElement.style.left = offer.location.x + 'px';
+  pinElement.style.top = offer.location.y + 'px';
+  pinImage.src = offer.author.avatar;
   return pinElement;
 };
 
-generatePins(offerList);
 
-/*
-Функция для отрисовки сгенерированных ранее DOM-элементов в блок '.map__pins',
-создает фрагмент документа для последующего добавления в него новых нод,
-отрисовывает с помощью цикла каждый элемент, полученный из функции generatePins,
-добавляет сформированный фрагмент в документ.
-*/
-
-var fillMapPins = function () {
+// Отрисовка меток и добавление полученных фрагментов в документ
+var fillMapPins = function (offers) {
   var fragment = document.createDocumentFragment();
-  offerList.forEach(function () {
-    fragment.appendChild(generatePins(offerList));
+  offers.forEach(function (currentOffer) {
+    fragment.appendChild(generatePins(currentOffer));
   });
-  pinTemplate.appendChild(fragment);
+  var pinsContainer = document.querySelector('.map__pins');
+  pinsContainer.appendChild(fragment);
 };
 
 fillMapPins(offerList);
