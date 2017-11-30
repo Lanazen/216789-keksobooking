@@ -132,3 +132,51 @@ var fillMapPins = function (offers) {
 };
 
 fillMapPins(offerList);
+
+// Функция для вывода типа жилья
+var getTypeHouse = function (type) {
+  if (type === 'flat') {
+    return 'Квартира';
+  } else if (type === 'bungalo') {
+    return 'Бунгало';
+  }
+  return 'Дом';
+};
+
+// Функция для отрисовки удобств в элементы списка
+var getFeaturesElement = function (features) {
+  var featuresElement = '';
+  features.forEach(function (item) {
+    featuresElement += '<li class="feature feature--' + item + '></li>';
+  });
+  return featuresElement;
+};
+
+// Создание элементов объявления на основе шаблона и заполнение их данными из объекта
+var offerTemplate = document.querySelector('template').content.querySelector('.map-card');
+
+var renderOfferList = function (object) {
+  var offerElement = offerTemplate.cloneNode(true);
+  offerElement.querySelector('.popup-avatar').setAttribute('src', object.author.avatar);
+  offerElement.querySelector('h3').textContent = object.offer.title;
+  offerElement.querySelector('p small').textContent = object.offer.address;
+  offerElement.querySelector('.popup__price').textContent = object.offer.price + '\u20BD/ночь';
+  offerElement.querySelector('h4').textContent = getTypeHouse(object.offer.type);
+  offerElement.querySelector('p:nth-of-type(3)').textContent = object.offer.rooms + ' для ' + object.offer.guests + ' гостей';
+  offerElement.querySelector('p:nth-of-type(4)').textContent = 'Заезд после ' + object.offer.checkin + ', выезд до ' + object.offer.checkout;
+  offerElement.querySelector('.popup__features').innerHTML = getFeaturesElement(object.offer.features);
+  offerElement.querySelector('p:nth-of-type(5)').textContent = object.offer.description;
+  return offerElement;
+};
+
+// Отрисовка похожих объявлений и добавление их в документ
+var fillMapOffers = function (adverts) {
+  var fragmentOffers = document.createDocumentFragment();
+  adverts.forEach(function (currentAdvert) {
+    fragmentOffers.appendChild(renderOfferList(currentAdvert));
+  });
+  var offerContainer = document.querySelector('.map');
+  offerContainer.appendChild(fragmentOffers);
+};
+
+fillMapOffers(offerList);
