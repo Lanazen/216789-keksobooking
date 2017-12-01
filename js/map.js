@@ -143,7 +143,7 @@ fillMapPins(offerList);
 var getFeaturesElement = function (features) {
   var featuresElement = '';
   features.forEach(function (item) {
-    featuresElement += '<li class="feature feature--' + item + '></li>';
+    featuresElement += '<li class="feature feature--' + item + '"></li>';
   });
   return featuresElement;
 };
@@ -160,8 +160,8 @@ var renderOfferList = function (object) {
   offerElement.querySelector('h4').textContent = TYPE_OFFER_VALUE[object.offer.type];
   offerElement.querySelector('p:nth-of-type(3)').textContent = object.offer.rooms + ' для ' + object.offer.guests + ' гостей';
   offerElement.querySelector('p:nth-of-type(4)').textContent = 'Заезд после ' + object.offer.checkin + ', выезд до ' + object.offer.checkout;
-  offerElement.querySelector('.popup__features').innerHTML = getFeaturesElement(object.offer.features);
-  // offerElement.querySelector('.popup__features').insertAdjacentHTML('beforeEnd', getFeaturesElement(object.offer.features));
+  offerElement.querySelector('.popup__features').innerHTML = '';
+  offerElement.querySelector('.popup__features').insertAdjacentHTML('beforeEnd', getFeaturesElement(object.offer.features));
   offerElement.querySelector('p:nth-of-type(5)').textContent = object.offer.description;
   return offerElement;
 };
