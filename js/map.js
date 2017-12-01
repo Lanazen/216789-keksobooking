@@ -56,6 +56,8 @@ var MIN_ROOMS = 1;
 var MAX_ROOMS = 5;
 var MIN_GUESTS = 1;
 var MAX_GUESTS = 5;
+var PIN_HEIGHT = 44;
+var ARROW_HEIGHT = 18;
 
 // Нахождение случайного числа, max не включен в диапазон, поэтому прибавляем 1
 var getRandomNumber = function (min, max) {
@@ -121,7 +123,7 @@ var generatePins = function (offer) {
   var pinElement = pinTemplate.cloneNode(true);
   var pinImage = pinElement.querySelector('img');
   pinElement.style.left = offer.location.x + 'px';
-  pinElement.style.top = offer.location.y + 'px';
+  pinElement.style.top = offer.location.y - PIN_HEIGHT / 2 + ARROW_HEIGHT + 'px';
   pinImage.src = offer.author.avatar;
   return pinElement;
 };
