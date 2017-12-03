@@ -58,6 +58,7 @@ var MIN_GUESTS = 1;
 var MAX_GUESTS = 5;
 var PIN_HEIGHT = 44;
 var ARROW_HEIGHT = 18;
+var ENTER_KEYCODE = 13;
 
 // Нахождение случайного числа, max не включен в диапазон, поэтому прибавляем 1
 var getRandomNumber = function (min, max) {
@@ -111,10 +112,11 @@ var generateOfferList = function () {
 };
 
 var offerList = generateOfferList();
-
-// Убираем класс у карты
 var mapImage = document.querySelector('.map');
-mapImage.classList.remove('map--faded');
+var pinsContainer = document.querySelector('.map__pins');
+var mainPinElement = mapImage.querySelector('.map__pin--main');
+var fragment = document.createDocumentFragment();
+var noticeForm = document.querySelector('.notice__form');
 
 // Создание меток на карте и заполнение их данными из массива
 var pinTemplate = document.querySelector('template').content.querySelector('.map__pin');
@@ -128,15 +130,11 @@ var generatePins = function (offer) {
   return pinElement;
 };
 
-
-// Отрисовка меток и добавление полученных фрагментов в документ
+// Отрисовка меток на карте
 var fillMapPins = function (offers) {
-  var fragment = document.createDocumentFragment();
   offers.forEach(function (currentOffer) {
     fragment.appendChild(generatePins(currentOffer));
   });
-  var pinsContainer = document.querySelector('.map__pins');
-  pinsContainer.appendChild(fragment);
 };
 
 fillMapPins(offerList);
@@ -175,3 +173,20 @@ var fillMapOffers = function (adverts) {
 };
 
 fillMapOffers(offerList[0]);
+
+// Делаем карту активной для пользователя
+var openMap = function () {
+  mapImage.classList.remove('map--faded');
+  pinsContainer.appendChild(fragment);
+  noticeForm.classList.remove('notice__form--disabled');
+};
+
+mainPinElement.addEventListener('mouseup', function () {
+  openMap();
+});
+
+mainPinElement.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    openMap();
+  }
+});
