@@ -115,27 +115,31 @@ var generateOfferList = function () {
 var offerList = generateOfferList();
 var mapImage = document.querySelector('.map');
 var pinsContainer = document.querySelector('.map__pins');
+var pinTemplate = document.querySelector('template').content.querySelector('.map__pin');
 var mainPinElement = mapImage.querySelector('.map__pin--main');
-var fragment = document.createDocumentFragment();
+var pinFragment = document.createDocumentFragment();
 var noticeForm = document.querySelector('.notice__form');
 
-// Создание меток на карте и заполнение их данными из массива
-var pinTemplate = document.querySelector('template').content.querySelector('.map__pin');
 
-var generatePins = function (offer) {
+// Функция generatePin принимает на вход элемент массива данных, соответствующий объявлению,
+// клонирует ноду пина из шаблона, вставляет координаты и изображение, назначает пину обработчик клика,
+// который передает элемент массива в функцию, изменяющую содержимое карточки
+var generatePin = function (offer) {
   var pinElement = pinTemplate.cloneNode(true);
 
-  // Открытие попапа
+  // Функция openPopup открывает карточку объявления по клику или нажатию enter на пин,
+  // назначает активному элементу пина класс map__pin--active и заполняет
+  // карточку данными из элементов массива generateOfferList()
   var openPopup = function () {
     pinElement.classList.add('map__pin--active');
-    fillMapOffers(offerList[0]);
+    generateOffer(offer);
+    var popup = document.querySelector('.popup');
+    popup.classList.remove('hidden');
   };
-
   // Открытие попапа мышкой
   pinElement.addEventListener('mouseup', function () {
     openPopup();
   });
-
   // Открытие попапа с клавиатуры
   pinElement.addEventListener('keydown', function (evt) {
     if (evt.keyCode === ENTER_KEYCODE) {
@@ -150,17 +154,22 @@ var generatePins = function (offer) {
   return pinElement;
 };
 
-// Отрисовка меток на карте
-var fillMapPins = function (offers) {
+// Функция renderPinList принимает на вход элемент массива объекта offerList
+// отрисовыает каждый пин на карте в рандомном месте
+// и передает фрагмент каждого пина в функцию generatePin
+// Функция возовращает уже сформированную и готовую для вставки в разметку ноду
+
+var renderPinList = function (offers) {
   offers.forEach(function (currentOffer) {
-    fragment.appendChild(generatePins(currentOffer));
+    pinFragment.appendChild(generatePin(currentOffer));
   });
 };
 
-fillMapPins(offerList);
+renderPinList(offerList);
 
-// Функция для отрисовки удобств в элементы списка
-var getFeaturesElement = function (features) {
+// Функция getFeaturesElement отрисовыает рандомно полученные списки удобства в элементы списка li
+
+var getFeaturesList = function (features) {
   var featuresElement = '';
   features.forEach(function (item) {
     featuresElement += '<li class="feature feature--' + item + '"></li>';
@@ -168,12 +177,17 @@ var getFeaturesElement = function (features) {
   return featuresElement;
 };
 
-// Создание элементов объявления на основе шаблона и заполнение их данными из объекта
+// Создание карточки объявления на основе клонированного шаблона template
+
 var offerTemplate = document.querySelector('template').content.querySelector('.map__card');
 var offerElement = offerTemplate.cloneNode(true);
+var offerContainer = document.querySelector('.map');
 var popupCloseButton = offerElement.querySelector('.popup__close');
 
-var renderOfferList = function (object) {
+// Функция generateOffer принимает на вход данные объекта offerList,
+// находит нужные селекторы в клонированном шаблоне и заполняет их соответствующими
+// данными из объекта offerList, возвращает готовую карточку объявления
+var generateOffer = function (object) {
   offerElement.querySelector('.popup__avatar').setAttribute('src', object.author.avatar);
   offerElement.querySelector('h3').textContent = object.offer.title;
   offerElement.querySelector('p small').textContent = object.offer.address;
@@ -182,30 +196,33 @@ var renderOfferList = function (object) {
   offerElement.querySelector('p:nth-of-type(3)').textContent = object.offer.rooms + ' для ' + object.offer.guests + ' гостей';
   offerElement.querySelector('p:nth-of-type(4)').textContent = 'Заезд после ' + object.offer.checkin + ', выезд до ' + object.offer.checkout;
   offerElement.querySelector('.popup__features').innerHTML = '';
-  offerElement.querySelector('.popup__features').insertAdjacentHTML('beforeEnd', getFeaturesElement(object.offer.features));
+  offerElement.querySelector('.popup__features').insertAdjacentHTML('beforeEnd', getFeaturesList(object.offer.features));
   offerElement.querySelector('p:nth-of-type(5)').textContent = object.offer.description;
   return offerElement;
 };
 
-var offerContainer = document.querySelector('.map');
-
-// Отрисовка похожих объявлений и добавление их в документ
-var fillMapOffers = function (adverts) {
-  offerContainer.appendChild(renderOfferList(adverts));
+// Отрисовка карточки объявления на основе первого объекта offerList и ее добавление в документ
+var renderOfferList = function (adverts) {
+  adverts.forEach(function () {
+    offerContainer.appendChild(generateOffer(offerList[0]));
+    var popup = document.querySelector('.popup');
+    popup.classList.add('hidden');
+  });
 };
+
+renderOfferList(offerList);
+
 
 // Делаем карту активной для пользователя
 var openMap = function () {
   mapImage.classList.remove('map--faded');
-  pinsContainer.appendChild(fragment);
+  pinsContainer.appendChild(pinFragment);
   noticeForm.classList.remove('notice__form--disabled');
 };
-
 // Активация карты мышкой
 mainPinElement.addEventListener('mouseup', function () {
   openMap();
 });
-
 // Активация карты клавиатурой
 mainPinElement.addEventListener('keydown', function (evt) {
   if (evt.keyCode === ENTER_KEYCODE) {
@@ -213,28 +230,42 @@ mainPinElement.addEventListener('keydown', function (evt) {
   }
 });
 
+
 // Закрытие попапа
 var closePopup = function () {
   offerElement.classList.add('hidden');
   var pinActive = mapImage.querySelector('.map__pin--active');
   pinActive.classList.remove('map__pin--active');
 };
-
 // Закрытие попапа с помощью esc
 document.addEventListener('keydown', function (evt) {
   if (evt.keyCode === ESC_KEYCODE) {
     closePopup();
   }
 });
-
 // Закрытие попапа мышкой
 popupCloseButton.addEventListener('mouseup', function () {
   closePopup();
 });
-
 // Закрытие попапа с клавиатуры
 popupCloseButton.addEventListener('keydown', function (evt) {
   if (evt.keyCode === ENTER_KEYCODE) {
     closePopup();
   }
 });
+
+
+// Функция activatePin принимает на вход событие на пине,
+// проверяет наличие предыдущих активных пинов, и удаляет у них класс map__pin--active,
+// добавляет этот класс пину, на котором непосредственно происходит событие
+
+/* var activatePin = function (evt) {
+  var pinActive = document.querySelector('.map__pin--active');
+  var popup = offerTemplate.querySelector('.popup');
+  if (pinActive) {
+    pinActive.classList.remove('map__pin--active');
+    popup.classList.add('hidden');
+  }
+  evt.currentTarget.classList.add('map__pin--active');
+};
+ */
