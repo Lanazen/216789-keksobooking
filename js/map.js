@@ -59,6 +59,7 @@ var MAX_GUESTS = 5;
 var PIN_HEIGHT = 44;
 var ARROW_HEIGHT = 18;
 var ENTER_KEYCODE = 13;
+var ESC_KEYCODE = 27;
 
 // Нахождение случайного числа, max не включен в диапазон, поэтому прибавляем 1
 var getRandomNumber = function (min, max) {
@@ -123,6 +124,25 @@ var pinTemplate = document.querySelector('template').content.querySelector('.map
 
 var generatePins = function (offer) {
   var pinElement = pinTemplate.cloneNode(true);
+
+  // Открытие попапа
+  var openPopup = function () {
+    pinElement.classList.add('map__pin--active');
+    fillMapOffers(offerList[0]);
+  };
+
+  // Открытие попапа мышкой
+  pinElement.addEventListener('mouseup', function () {
+    openPopup();
+  });
+
+  // Открытие попапа с клавиатуры
+  pinElement.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === ENTER_KEYCODE) {
+      openPopup();
+    }
+  });
+
   var pinImage = pinElement.querySelector('img');
   pinElement.style.left = offer.location.x + 'px';
   pinElement.style.top = offer.location.y - PIN_HEIGHT / 2 + ARROW_HEIGHT + 'px';
@@ -150,9 +170,10 @@ var getFeaturesElement = function (features) {
 
 // Создание элементов объявления на основе шаблона и заполнение их данными из объекта
 var offerTemplate = document.querySelector('template').content.querySelector('.map__card');
+var offerElement = offerTemplate.cloneNode(true);
+var popupCloseButton = offerElement.querySelector('.popup__close');
 
 var renderOfferList = function (object) {
-  var offerElement = offerTemplate.cloneNode(true);
   offerElement.querySelector('.popup__avatar').setAttribute('src', object.author.avatar);
   offerElement.querySelector('h3').textContent = object.offer.title;
   offerElement.querySelector('p small').textContent = object.offer.address;
@@ -166,13 +187,12 @@ var renderOfferList = function (object) {
   return offerElement;
 };
 
+var offerContainer = document.querySelector('.map');
+
 // Отрисовка похожих объявлений и добавление их в документ
 var fillMapOffers = function (adverts) {
-  var offerContainer = document.querySelector('.map');
   offerContainer.appendChild(renderOfferList(adverts));
 };
-
-fillMapOffers(offerList[0]);
 
 // Делаем карту активной для пользователя
 var openMap = function () {
@@ -181,12 +201,40 @@ var openMap = function () {
   noticeForm.classList.remove('notice__form--disabled');
 };
 
+// Активация карты мышкой
 mainPinElement.addEventListener('mouseup', function () {
   openMap();
 });
 
+// Активация карты клавиатурой
 mainPinElement.addEventListener('keydown', function (evt) {
   if (evt.keyCode === ENTER_KEYCODE) {
     openMap();
+  }
+});
+
+// Закрытие попапа
+var closePopup = function () {
+  offerElement.classList.add('hidden');
+  var pinActive = mapImage.querySelector('.map__pin--active');
+  pinActive.classList.remove('map__pin--active');
+};
+
+// Закрытие попапа с помощью esc
+document.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    closePopup();
+  }
+});
+
+// Закрытие попапа мышкой
+popupCloseButton.addEventListener('mouseup', function () {
+  closePopup();
+});
+
+// Закрытие попапа с клавиатуры
+popupCloseButton.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    closePopup();
   }
 });
