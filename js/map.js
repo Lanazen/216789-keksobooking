@@ -65,8 +65,7 @@ var pinsContainer = document.querySelector('.map__pins');
 var pinTemplate = document.querySelector('template').content.querySelector('.map__pin');
 var pinMain = map.querySelector('.map__pin--main');
 var pinFragment = document.createDocumentFragment();
-var currentPin = false;
-var activePin = map.querySelector('.map__pin--active');
+var currentActivePin = false;
 var cardTemplate = document.querySelector('template').content.querySelector('.map__card');
 var card = cardTemplate.cloneNode(true);
 var cardCloseButton = card.querySelector('.popup__close');
@@ -139,28 +138,11 @@ var generateOffers = function () {
 var generatePin = function (offer) {
   var pinItem = pinTemplate.cloneNode(true);
 
-  // Функция присваивает пину класс map__pin--active для открытия карточки объявления
-  var openCard = function () {
-    pinItem.classList.add('map__pin--active');
-    createCard(offer);
-    card.classList.remove('hidden');
-  };
-
   // Открытие попапа мышкой
-  var onPinItemClick = function () {
-    openCard();
-  };
-
-  pinItem.addEventListener('click', onPinItemClick);
+  pinItem.addEventListener('click', onPinItemClick.bind(null, pinItem, offer));
 
   // Открытие попапа с клавиатуры
-  var onPinItemPress = function (evt) {
-    if (evt.keyCode === ENTER_KEYCODE) {
-      openCard();
-    }
-  };
-
-  pinItem.addEventListener('keydown', onPinItemPress);
+  pinItem.addEventListener('keydown', onPinItemPress.bind(null, pinItem, offer));
 
   var pinImage = pinItem.querySelector('img');
   pinItem.style.left = offer.location.x + 'px';
@@ -203,12 +185,16 @@ var renderCards = function () {
   card.classList.add('hidden');
 };
 
-// Функция проверяет наличие активных пинов, и удаляет у них класс map__pin--active
-var deactivatePin = function () {
-  if (currentPin !== false) {
-    currentPin.classList.remove('map__pin--active');
-    currentPin = false;
+/* Функция проверяет наличие предыдущего активного пина, удаляет у него класс map__pin--active
+и присваивает этот класс новому текущему активному пину */
+var activatePin = function (pin) {
+  if (currentActivePin === false) {
+    pin.classList.add('map__pin--active');
+  } else {
+    currentActivePin.classList.remove('map__pin--active');
+    pin.classList.add('map__pin--active');
   }
+  currentActivePin = pin;
 };
 
 /* ======== Функции - обработчики событий ======== */
@@ -232,10 +218,31 @@ var onPinMainPressEnter = function (evt) {
   }
 };
 
+/* Функция присваивает текущему пину класс map__pin--active, заполняет карточку
+объявления данными, соответствующими этому пину, и открывает ее */
+var openCard = function (currentPinItem, currentOffer) {
+  activatePin(currentPinItem);
+  createCard(currentOffer);
+  card.classList.remove('hidden');
+};
+
+// Функция открытия попапа мышкой
+var onPinItemClick = function (currentPinItem, currentOffer) {
+  openCard(currentPinItem, currentOffer);
+};
+
+// Функция открытия попапа с клавиатуры
+var onPinItemPress = function (evt, currentPinItem, currentOffer) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    openCard(currentPinItem, currentOffer);
+  }
+};
+
 // Функция закрытия попапа
 var closeCard = function () {
   card.classList.add('hidden');
-  activePin.classList.remove('map__pin--active');
+  currentActivePin.classList.remove('map__pin--active');
+  currentActivePin = false;
 };
 
 // Функция закрытия попапа с помощью esc
@@ -284,15 +291,3 @@ cardCloseButton.addEventListener('click', onCardCloseClick);
 
 // Закрытие попапа с клавиатуры
 cardCloseButton.addEventListener('keydown', onCardClosePressEnter);
-
-// Убирает активный класс у пина
-pinsContainer.addEventListener('click', function () {
-  deactivatePin();
-});
-
-// Убирает активный класс у пина
-pinsContainer.addEventListener('keydown', function (evt) {
-  if (evt.keyCode === ENTER_KEYCODE) {
-    deactivatePin();
-  }
-});
