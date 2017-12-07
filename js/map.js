@@ -15,12 +15,14 @@ var TITLE_OFFER = [
 var TYPE_OFFER = [
   'flat',
   'house',
-  'bungalo'
+  'bungalo',
+  'palace'
 ];
 var TYPE_OFFER_VALUE = {
+  bungalo: 'Лачуга',
   flat: 'Квартира',
-  bungalo: 'Бунгало',
-  house: 'Дом'
+  house: 'Дом',
+  palace: 'Дворец'
 };
 var TIME_OFFER = [
   '12:00',
@@ -291,3 +293,59 @@ cardCloseButton.addEventListener('click', onCardCloseClick);
 
 // Закрытие попапа с клавиатуры
 cardCloseButton.addEventListener('keydown', onCardClosePressEnter);
+
+/* ======== ВАЛИДАЦИЯ ФОРМЫ ======== */
+
+/* ======== Переменные ======== */
+
+var timeCheckin = noticeForm.querySelector('#timein');
+var timeCheckout = noticeForm.querySelector('#timeout');
+var houseType = noticeForm.querySelector('#type');
+var houseMinPrice = noticeForm.querySelector('#price');
+var houseTypeMinPrice = {
+  bungalo: '0',
+  flat: '1000',
+  house: '5000',
+  palace: '10000'
+};
+
+/* ======== Функции - обработчики событий ======== */
+
+// Функция для синхронизации полей «время заезда» и «время выезда»
+var timeSync = function (inputField, inputValue) {
+  var selectInput = false;
+  selectInput = inputField.value;
+  inputValue.value = selectInput;
+};
+
+// Синхронизация поля «время выезда» при введенном поле «время заезда»
+var onChangeCheckin = function () {
+  timeSync(timeCheckin, timeCheckout);
+};
+
+// Синхронизация поля «время заезда» при введенном поле «время выезда»
+var onChangeCheckout = function () {
+  timeSync(timeCheckout, timeCheckin);
+};
+
+// Функция для синхронизации поля «Тип жилья» с минимальной ценой
+var typeMinPriceSync = function () {
+  houseMinPrice.min = houseTypeMinPrice[houseType.value];
+  houseMinPrice.placeholder = houseMinPrice.min;
+};
+
+// Синхронизации поля «Тип жилья» с минимальной ценой
+var onChangeType = function () {
+  typeMinPriceSync();
+};
+
+/* ======== Обработка событий ======== */
+
+// Выбор времени заезда
+timeCheckin.addEventListener('change', onChangeCheckin);
+
+// Выбор времени выезда
+timeCheckout.addEventListener('change', onChangeCheckout);
+
+// Выбор типа жилья
+houseType.addEventListener('change', onChangeType);
