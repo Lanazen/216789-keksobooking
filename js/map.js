@@ -298,6 +298,7 @@ cardCloseButton.addEventListener('keydown', onCardClosePressEnter);
 
 /* ======== Переменные ======== */
 
+var title = noticeForm.querySelector('#title');
 var timeCheckin = noticeForm.querySelector('#timein');
 var timeCheckout = noticeForm.querySelector('#timeout');
 var houseType = noticeForm.querySelector('#type');
@@ -329,14 +330,49 @@ var onChangeCheckout = function () {
 };
 
 // Функция для синхронизации поля «Тип жилья» с минимальной ценой
-var typeMinPriceSync = function () {
+var onChangeType = function () {
   houseMinPrice.min = houseTypeMinPrice[houseType.value];
   houseMinPrice.placeholder = houseMinPrice.min;
 };
 
-// Синхронизации поля «Тип жилья» с минимальной ценой
-var onChangeType = function () {
-  typeMinPriceSync();
+// Функция проверки на валидность заголовка объявления
+var onInvalidTitle = function () {
+  title.style.borderColor = 'red';
+  if (title.validity.tooShort) {
+    title.setCustomValidity('Заголовок должен состоять минимум из 30 символов');
+  } else if (title.validity.tooLong) {
+    title.setCustomValidity('Заголовок не должен превышать 100 символов');
+  } else if (title.validity.valueMissing) {
+    title.setCustomValidity('Пожалуйста, заполните это поле');
+  } else {
+    title.setCustomValidity('');
+    title.style.borderColor = 'none';
+  }
+};
+
+// Проверка минимальной допустимой длины заголовка объявления для Edge
+var onInvalidTitleEdge = function (evt) {
+  var target = evt.target;
+  if (target.value.length < 30) {
+    target.setCustomValidity('Заголовок должен состоять минимум из 30 символов');
+  } else {
+    target.setCustomValidity('');
+  }
+};
+
+// Функция проверки ввода минимальной цены
+var onInvalidMinPrice = function () {
+  houseMinPrice.style.borderColor = 'red';
+  if (houseMinPrice.validity.rangeUnderflow) {
+    houseMinPrice.setCustomValidity('Стоимость жилья меньше допустимой');
+  } else if (houseMinPrice.validity.rangeOverflow) {
+    houseMinPrice.setCustomValidity('Стоимость жилья выше допустимой');
+  } else if (houseMinPrice.validity.valueMissing) {
+    houseMinPrice.setCustomValidity('Пожалуйста, заполните это поле');
+  } else {
+    houseMinPrice.setCustomValidity('');
+    houseMinPrice.style.borderColor = 'none';
+  }
 };
 
 /* ======== Обработка событий ======== */
@@ -349,3 +385,12 @@ timeCheckout.addEventListener('change', onChangeCheckout);
 
 // Выбор типа жилья
 houseType.addEventListener('change', onChangeType);
+
+// Проверка ввода заголовка объявления
+title.addEventListener('invalid', onInvalidTitle);
+
+// Проверка минимальной длины заголовка для Edge
+title.addEventListener('invalid', onInvalidTitleEdge);
+
+// Проверка ввода минимальной цены
+houseMinPrice.addEventListener('invalid', onInvalidMinPrice);
