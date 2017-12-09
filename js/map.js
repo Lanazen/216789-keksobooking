@@ -206,6 +206,9 @@ var openMap = function () {
   map.classList.remove('map--faded');
   pinsContainer.appendChild(pinFragment);
   noticeForm.classList.remove('notice__form--disabled');
+  formFieldset.forEach(function (item) {
+    item.removeAttribute('disabled');
+  });
 };
 
 // Функция активации карты мышкой
@@ -298,17 +301,51 @@ cardCloseButton.addEventListener('keydown', onCardClosePressEnter);
 
 /* ======== Переменные ======== */
 
-var title = noticeForm.querySelector('#title');
-var timeCheckin = noticeForm.querySelector('#timein');
-var timeCheckout = noticeForm.querySelector('#timeout');
-var houseType = noticeForm.querySelector('#type');
-var houseMinPrice = noticeForm.querySelector('#price');
+var formFieldset = noticeForm.querySelectorAll('fieldset');
+var inputTitle = noticeForm.querySelector('#title');
+var inputAddress = noticeForm.querySelector('#address');
+var selectTimein = noticeForm.querySelector('#timein');
+var selectTimeout = noticeForm.querySelector('#timeout');
+var selectHouseType = noticeForm.querySelector('#type');
+var inputMinPrice = noticeForm.querySelector('#price');
 var houseTypeMinPrice = {
   bungalo: '0',
   flat: '1000',
   house: '5000',
   palace: '10000'
 };
+var selectRoomNumber = noticeForm.querySelector('#room_number');
+var selectCapacity = noticeForm.querySelector('#capacity');
+var numberOfGuests = selectCapacity.querySelectorAll('option');
+var RoomsCapacity = {
+  '1': ['1'],
+  '2': ['1', '2'],
+  '3': ['1', '2', '3'],
+  '100': ['0']
+};
+
+/* ======== Функции ======== */
+
+var setNoticeForm = function () {
+  formFieldset.forEach(function (item) {
+    item.setAttribute('disabled', 'true');
+  });
+  noticeForm.setAttribute('action', 'https://js.dump.academy/keksobooking');
+  noticeForm.setAttribute('type', 'multipart/form-data');
+  inputAddress.setAttribute('required', 'true');
+  inputAddress.setAttribute('readonly', 'true');
+  inputAddress.setAttribute('placeholder', 'Поставьте метку для установки координат');
+  inputTitle.setAttribute('required', 'true');
+  inputTitle.setAttribute('minlength', '30');
+  inputTitle.setAttribute('maxlength', '100');
+  inputMinPrice.setAttribute('required', 'true');
+  inputMinPrice.setAttribute('type', 'number');
+  inputMinPrice.setAttribute('min', '0');
+  inputMinPrice.setAttribute('max', '1000000');
+  inputMinPrice.setAttribute('value', '1000');
+};
+
+setNoticeForm();
 
 /* ======== Функции - обработчики событий ======== */
 
@@ -321,76 +358,79 @@ var timeSync = function (inputField, inputValue) {
 
 // Синхронизация поля «время выезда» при введенном поле «время заезда»
 var onChangeCheckin = function () {
-  timeSync(timeCheckin, timeCheckout);
+  timeSync(selectTimein, selectTimeout);
 };
 
 // Синхронизация поля «время заезда» при введенном поле «время выезда»
-var onChangeCheckout = function () {
-  timeSync(timeCheckout, timeCheckin);
+var onChangeCheckout = function (evt) {
+  selectTimein.value = evt.target.value;
 };
 
 // Функция для синхронизации поля «Тип жилья» с минимальной ценой
 var onChangeType = function () {
-  houseMinPrice.min = houseTypeMinPrice[houseType.value];
-  houseMinPrice.placeholder = houseMinPrice.min;
+  inputMinPrice.min = houseTypeMinPrice[selectHouseType.value];
+  inputMinPrice.placeholder = inputMinPrice.min;
 };
 
 // Функция проверки на валидность заголовка объявления
-var onInvalidTitle = function () {
-  title.style.borderColor = 'red';
-  if (title.validity.tooShort) {
-    title.setCustomValidity('Заголовок должен состоять минимум из 30 символов');
-  } else if (title.validity.tooLong) {
-    title.setCustomValidity('Заголовок не должен превышать 100 символов');
-  } else if (title.validity.valueMissing) {
-    title.setCustomValidity('Пожалуйста, заполните это поле');
+var onInvalidTitle = function (evt) {
+  inputTitle.style.borderColor = 'red';
+  if (inputTitle.validity.tooShort || evt.target.value.length < 30) {
+    inputTitle.setCustomValidity('Заголовок должен состоять минимум из 30 символов');
+  } else if (inputTitle.validity.tooLong) {
+    inputTitle.setCustomValidity('Заголовок не должен превышать 100 символов');
+  } else if (inputTitle.validity.valueMissing) {
+    inputTitle.setCustomValidity('Пожалуйста, заполните это поле');
   } else {
-    title.setCustomValidity('');
-    title.style.borderColor = 'none';
-  }
-};
-
-// Проверка минимальной допустимой длины заголовка объявления для Edge
-var onInvalidTitleEdge = function (evt) {
-  var target = evt.target;
-  if (target.value.length < 30) {
-    target.setCustomValidity('Заголовок должен состоять минимум из 30 символов');
-  } else {
-    target.setCustomValidity('');
+    inputTitle.setCustomValidity('');
+    inputTitle.style.borderColor = 'none';
   }
 };
 
 // Функция проверки ввода минимальной цены
 var onInvalidMinPrice = function () {
-  houseMinPrice.style.borderColor = 'red';
-  if (houseMinPrice.validity.rangeUnderflow) {
-    houseMinPrice.setCustomValidity('Стоимость жилья меньше допустимой');
-  } else if (houseMinPrice.validity.rangeOverflow) {
-    houseMinPrice.setCustomValidity('Стоимость жилья выше допустимой');
-  } else if (houseMinPrice.validity.valueMissing) {
-    houseMinPrice.setCustomValidity('Пожалуйста, заполните это поле');
+  inputMinPrice.style.borderColor = 'red';
+  if (inputMinPrice.validity.rangeUnderflow) {
+    inputMinPrice.setCustomValidity('Стоимость жилья меньше допустимой');
+  } else if (inputMinPrice.validity.rangeOverflow) {
+    inputMinPrice.setCustomValidity('Стоимость жилья выше допустимой');
+  } else if (inputMinPrice.validity.valueMissing) {
+    inputMinPrice.setCustomValidity('Пожалуйста, заполните это поле');
   } else {
-    houseMinPrice.setCustomValidity('');
-    houseMinPrice.style.borderColor = 'none';
+    inputMinPrice.setCustomValidity('');
+    inputMinPrice.style.borderColor = 'none';
   }
+};
+
+/* Функция синхронизации количества комнат с количеством гостей:
+с помощью записи (RoomsCapacity[evt.target.value].indexOf(numberOfGuests[i].value)) получаем
+значения option, которые соответствуют индексам элементов для каждого массива свойств
+объекта RoomsCapacity, затем переводим эти значения на противоположные и ставим им класс select.
+Для того, чтобы скрыть ненужные option используем оператор !, которые возвращает значение true
+и присваивает класс hidden, если не находит элемент в массиве, и false, если элемент есть в массиве */
+var onChangeRoomNumber = function (evt) {
+  numberOfGuests.forEach(function (item) {
+    item.selected = (~RoomsCapacity[evt.target.value].indexOf(item.value));
+    item.hidden = !(~RoomsCapacity[evt.target.value].indexOf(item.value));
+  });
 };
 
 /* ======== Обработка событий ======== */
 
 // Выбор времени заезда
-timeCheckin.addEventListener('change', onChangeCheckin);
+selectTimein.addEventListener('change', onChangeCheckin);
 
 // Выбор времени выезда
-timeCheckout.addEventListener('change', onChangeCheckout);
+selectTimeout.addEventListener('change', onChangeCheckout);
 
 // Выбор типа жилья
-houseType.addEventListener('change', onChangeType);
+selectHouseType.addEventListener('change', onChangeType);
 
 // Проверка ввода заголовка объявления
-title.addEventListener('invalid', onInvalidTitle);
-
-// Проверка минимальной длины заголовка для Edge
-title.addEventListener('invalid', onInvalidTitleEdge);
+inputTitle.addEventListener('invalid', onInvalidTitle);
 
 // Проверка ввода минимальной цены
-houseMinPrice.addEventListener('invalid', onInvalidMinPrice);
+inputMinPrice.addEventListener('invalid', onInvalidMinPrice);
+
+// Выбор количества комнат
+selectRoomNumber.addEventListener('change', onChangeRoomNumber);
