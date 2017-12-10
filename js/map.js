@@ -299,6 +299,21 @@ cardCloseButton.addEventListener('keydown', onCardClosePressEnter);
 
 /* ======== ВАЛИДАЦИЯ ФОРМЫ ======== */
 
+/* ======== Константы ======== */
+
+var HOUSE_TYPE_MIN_PRICE = {
+  bungalo: '0',
+  flat: '1000',
+  house: '5000',
+  palace: '10000'
+};
+var ROOMS_CAPACITY = {
+  '1': ['1'],
+  '2': ['1', '2'],
+  '3': ['1', '2', '3'],
+  '100': ['0']
+};
+
 /* ======== Переменные ======== */
 
 var formFieldset = noticeForm.querySelectorAll('fieldset');
@@ -308,21 +323,9 @@ var selectTimein = noticeForm.querySelector('#timein');
 var selectTimeout = noticeForm.querySelector('#timeout');
 var selectHouseType = noticeForm.querySelector('#type');
 var inputMinPrice = noticeForm.querySelector('#price');
-var houseTypeMinPrice = {
-  bungalo: '0',
-  flat: '1000',
-  house: '5000',
-  palace: '10000'
-};
 var selectRoomNumber = noticeForm.querySelector('#room_number');
 var selectCapacity = noticeForm.querySelector('#capacity');
 var numberOfGuests = selectCapacity.querySelectorAll('option');
-var RoomsCapacity = {
-  '1': ['1'],
-  '2': ['1', '2'],
-  '3': ['1', '2', '3'],
-  '100': ['0']
-};
 
 /* ======== Функции ======== */
 
@@ -343,6 +346,10 @@ var setNoticeForm = function () {
   inputMinPrice.setAttribute('min', '0');
   inputMinPrice.setAttribute('max', '1000000');
   inputMinPrice.setAttribute('value', '1000');
+  numberOfGuests[0].setAttribute('hidden', 'true');
+  numberOfGuests[1].setAttribute('hidden', 'true');
+  numberOfGuests[2].setAttribute('selected', 'true');
+  numberOfGuests[3].setAttribute('hidden', 'true');
 };
 
 setNoticeForm();
@@ -368,7 +375,7 @@ var onChangeCheckout = function (evt) {
 
 // Функция для синхронизации поля «Тип жилья» с минимальной ценой
 var onChangeType = function () {
-  inputMinPrice.min = houseTypeMinPrice[selectHouseType.value];
+  inputMinPrice.min = HOUSE_TYPE_MIN_PRICE[selectHouseType.value];
   inputMinPrice.placeholder = inputMinPrice.min;
 };
 
@@ -410,8 +417,8 @@ var onInvalidMinPrice = function () {
 и присваивает класс hidden, если не находит элемент в массиве, и false, если элемент есть в массиве */
 var onChangeRoomNumber = function (evt) {
   numberOfGuests.forEach(function (item) {
-    item.selected = (~RoomsCapacity[evt.target.value].indexOf(item.value));
-    item.hidden = !(~RoomsCapacity[evt.target.value].indexOf(item.value));
+    item.selected = ~ROOMS_CAPACITY[evt.target.value].indexOf(item.value);
+    item.hidden = !~ROOMS_CAPACITY[evt.target.value].indexOf(item.value);
   });
 };
 
