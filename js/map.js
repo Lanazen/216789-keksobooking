@@ -2,6 +2,7 @@
 
 /* ======== Константы ======== */
 
+/*
 var TITLE_OFFER = [
   'Большая уютная квартира',
   'Маленькая неуютная квартира',
@@ -18,25 +19,27 @@ var TYPE_OFFER = [
   'bungalo',
   'palace'
 ];
+*/
 var TYPE_OFFER_VALUE = {
   bungalo: 'Лачуга',
   flat: 'Квартира',
   house: 'Дом',
   palace: 'Дворец'
 };
+/*
 var TIME_OFFER = [
   '12:00',
   '13:00',
   '14:00'
 ];
-/* var FEATURES_OFFER = [
+var FEATURES_OFFER = [
   'wifi',
   'dishwasher',
   'parking',
   'washer',
   'elevator',
   'conditioner'
-]; */
+];
 var LOCATION = {
   X: {
     MIN: 300,
@@ -54,6 +57,8 @@ var MIN_ROOMS = 1;
 var MAX_ROOMS = 5;
 var MIN_GUESTS = 1;
 var MAX_GUESTS = 5;
+*/
+
 var PIN_HEIGHT = 44;
 var ARROW_HEIGHT = 18;
 var ENTER_KEYCODE = 13;
@@ -61,7 +66,9 @@ var ESC_KEYCODE = 27;
 
 /* ======== Переменные ======== */
 
+/*
 var offers = [];
+ */
 var map = document.querySelector('.map');
 var pinsContainer = document.querySelector('.map__pins');
 var pinTemplate = document.querySelector('template').content.querySelector('.map__pin');
@@ -101,6 +108,7 @@ var getFeaturesList = function (features) {
   return featuresElement;
 };
 
+/*
 // Функция для генерации массива объектов недвижимости
 var generateOffers = function () {
   for (var i = 0; i < PINS_AMOUNT; i++) {
@@ -120,7 +128,7 @@ var generateOffers = function () {
         'guests': window.utils.getRandomNumber(MIN_GUESTS, MAX_GUESTS),
         'checkin': TIME_OFFER[window.utils.getRandomNumber(0, TIME_OFFER.length - 1)],
         'checkout': TIME_OFFER[window.utils.getRandomNumber(0, TIME_OFFER.length - 1)],
-        'features': window.utils.getRandomArray(),
+        'features': window.utils.getRandomArray(FEATURES_OFFER),
         'description': '',
         'photos': []
       },
@@ -133,6 +141,7 @@ var generateOffers = function () {
   }
   return offers;
 };
+*/
 
 /* Функция принимает на вход элемент массива offers, соответствующий объявлению,
 клонирует ноду пина из шаблона, вставляет координаты и изображение, назначает пину обработчик клика,
@@ -182,7 +191,7 @@ var createCard = function (object) {
 
 // Функция отрисовывает карточку объявления на основе первого объекта в массиве offers и добавляет ее в документ
 var renderCards = function () {
-  createCard(offers[0]);
+  createCard(window.data.offers[0]);
   map.appendChild(card);
   card.classList.add('hidden');
 };
@@ -272,13 +281,13 @@ var onCardClosePressEnter = function (evt) {
 /* ======== Логика работы ======== */
 
 // Генерация массива объектов недвижимости
-offers = generateOffers();
+window.data.offers = window.data.generateOffers();
 
 // Отрисовка пинов на карте
-renderPins(offers);
+renderPins(window.data.offers);
 
 // Заполнение карточек объявлений данными массива
-renderCards(offers);
+renderCards(window.data.offers);
 
 /* ======== Обработка событий ======== */
 
