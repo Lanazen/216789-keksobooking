@@ -29,14 +29,14 @@ var TIME_OFFER = [
   '13:00',
   '14:00'
 ];
-var FEATURES_OFFER = [
+/* var FEATURES_OFFER = [
   'wifi',
   'dishwasher',
   'parking',
   'washer',
   'elevator',
   'conditioner'
-];
+]; */
 var LOCATION = {
   X: {
     MIN: 300,
@@ -76,7 +76,7 @@ var noticeForm = document.querySelector('.notice__form');
 /* ======== Функции ======== */
 
 // Функция для нахождения случайного числа; max не включен в диапазон => прибавляем 1
-var getRandomNumber = function (min, max) {
+/* var getRandomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
@@ -90,7 +90,7 @@ var getRandomArray = function () {
     resultFeatures[i] = featuresOfferCopy.splice(indexRandom, 1).toString();
   }
   return resultFeatures;
-};
+}; */
 
 // Функция для создания рандомно полученные списки удобства в элементы списка li
 var getFeaturesList = function (features) {
@@ -104,8 +104,8 @@ var getFeaturesList = function (features) {
 // Функция для генерации массива объектов недвижимости
 var generateOffers = function () {
   for (var i = 0; i < PINS_AMOUNT; i++) {
-    var locationX = getRandomNumber(LOCATION.X.MIN, LOCATION.X.MAX);
-    var locationY = getRandomNumber(LOCATION.Y.MIN, LOCATION.Y.MAX);
+    var locationX = window.utils.getRandomNumber(LOCATION.X.MIN, LOCATION.X.MAX);
+    var locationY = window.utils.getRandomNumber(LOCATION.Y.MIN, LOCATION.Y.MAX);
     offers[i] = {
       'author': {
         'avatar': 'img/avatars/user0' + (i + 1) + '.png'
@@ -114,13 +114,13 @@ var generateOffers = function () {
       'offer': {
         'title': TITLE_OFFER[i],
         'address': locationX + ', ' + locationY,
-        'price': getRandomNumber(MIN_PRICE, MAX_PRICE),
-        'type': TYPE_OFFER[getRandomNumber(0, TYPE_OFFER.length - 1)],
-        'rooms': getRandomNumber(MIN_ROOMS, MAX_ROOMS),
-        'guests': getRandomNumber(MIN_GUESTS, MAX_GUESTS),
-        'checkin': TIME_OFFER[getRandomNumber(0, TIME_OFFER.length - 1)],
-        'checkout': TIME_OFFER[getRandomNumber(0, TIME_OFFER.length - 1)],
-        'features': getRandomArray(),
+        'price': window.utils.getRandomNumber(MIN_PRICE, MAX_PRICE),
+        'type': TYPE_OFFER[window.utils.getRandomNumber(0, TYPE_OFFER.length - 1)],
+        'rooms': window.utils.getRandomNumber(MIN_ROOMS, MAX_ROOMS),
+        'guests': window.utils.getRandomNumber(MIN_GUESTS, MAX_GUESTS),
+        'checkin': TIME_OFFER[window.utils.getRandomNumber(0, TIME_OFFER.length - 1)],
+        'checkout': TIME_OFFER[window.utils.getRandomNumber(0, TIME_OFFER.length - 1)],
+        'features': window.utils.getRandomArray(),
         'description': '',
         'photos': []
       },
