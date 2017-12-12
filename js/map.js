@@ -2,12 +2,6 @@
 
 /* ======== Константы ======== */
 
-var TYPE_OFFER_VALUE = {
-  bungalo: 'Лачуга',
-  flat: 'Квартира',
-  house: 'Дом',
-  palace: 'Дворец'
-};
 var PIN_HEIGHT = 44;
 var ARROW_HEIGHT = 18;
 var ENTER_KEYCODE = 13;
@@ -26,15 +20,6 @@ var card = cardTemplate.cloneNode(true);
 var cardCloseButton = card.querySelector('.popup__close');
 
 /* ======== Функции ======== */
-
-// Функция для создания рандомно полученные списки удобства в элементы списка li
-var getFeaturesList = function (features) {
-  var featuresElement = '';
-  features.forEach(function (item) {
-    featuresElement += '<li class="feature feature--' + item + '"></li>';
-  });
-  return featuresElement;
-};
 
 /* Функция принимает на вход элемент массива offers, соответствующий объявлению,
 клонирует ноду пина из шаблона, вставляет координаты и изображение, назначает пину обработчик клика,
@@ -65,29 +50,6 @@ var renderPins = function (items) {
   });
 };
 
-/* Функция принимает на вход данные массива offers,
-находит нужные селекторы в клонированном шаблоне и заполняет их соответствующими
-данными из объекта в массиве offers, возвращает готовую карточку объявления */
-var createCard = function (object) {
-  card.querySelector('.popup__avatar').setAttribute('src', object.author.avatar);
-  card.querySelector('h3').textContent = object.offer.title;
-  card.querySelector('p small').textContent = object.offer.address;
-  card.querySelector('.popup__price').textContent = object.offer.price + '\u20BD/ночь';
-  card.querySelector('h4').textContent = TYPE_OFFER_VALUE[object.offer.type];
-  card.querySelector('p:nth-of-type(3)').textContent = object.offer.rooms + ' для ' + object.offer.guests + ' гостей';
-  card.querySelector('p:nth-of-type(4)').textContent = 'Заезд после ' + object.offer.checkin + ', выезд до ' + object.offer.checkout;
-  card.querySelector('.popup__features').innerHTML = '';
-  card.querySelector('.popup__features').insertAdjacentHTML('beforeEnd', getFeaturesList(object.offer.features));
-  card.querySelector('p:nth-of-type(5)').textContent = object.offer.description;
-  return card;
-};
-
-// Функция отрисовывает карточку объявления на основе первого объекта в массиве offers и добавляет ее в документ
-var renderCards = function () {
-  createCard(offers[0]);
-  map.appendChild(card);
-  card.classList.add('hidden');
-};
 
 /* Функция проверяет наличие предыдущего активного пина, удаляет у него класс map__pin--active
 и присваивает этот класс новому текущему активному пину */
@@ -124,9 +86,10 @@ var onPinMainPressEnter = function (evt) {
 
 /* Функция присваивает текущему пину класс map__pin--active, заполняет карточку
 объявления данными, соответствующими этому пину, и открывает ее */
+
 var openCard = function (currentPinItem, currentOffer) {
   activatePin(currentPinItem);
-  createCard(currentOffer);
+  map.appendChild(window.cardModule.createCard(currentOffer));
   card.classList.remove('hidden');
 };
 
@@ -141,6 +104,7 @@ var onPinItemPress = function (evt, currentPinItem, currentOffer) {
     openCard(currentPinItem, currentOffer);
   }
 };
+
 
 // Функция закрытия попапа
 var closeCard = function () {
@@ -177,7 +141,7 @@ var offers = window.data.generateOffers();
 renderPins(offers);
 
 // Заполнение карточек объявлений данными массива
-renderCards(offers);
+window.cardModule.renderCards(offers);
 
 /* ======== Обработка событий ======== */
 
