@@ -5,6 +5,7 @@
   var ARROW_HEIGHT = 18;
   var ENTER_KEYCODE = 13;
   var pinTemplate = document.querySelector('template').content.querySelector('.map__pin');
+  var pinsContainer = document.querySelector('.map__pins');
   var pinFragment = document.createDocumentFragment();
   var currentActivePin = false;
 
@@ -14,10 +15,10 @@
       var pinItem = pinTemplate.cloneNode(true);
 
       // Открытие попапа мышкой
-      pinItem.addEventListener('click', this.onPinItemClick.bind(null, pinItem, offer));
+      pinItem.addEventListener('click', onPinItemClick.bind(null, pinItem, offer));
 
       // Открытие попапа с клавиатуры
-      pinItem.addEventListener('keydown', this.onPinItemPress.bind(null, pinItem, offer));
+      pinItem.addEventListener('keydown', onPinItemPress.bind(null, pinItem, offer));
 
       var pinImage = pinItem.querySelector('img');
       pinItem.style.left = offer.location.x + 'px';
@@ -31,6 +32,7 @@
       items.forEach(function (currentItem) {
         pinFragment.appendChild(window.pin.generatePin(currentItem));
       });
+      pinsContainer.appendChild(pinFragment);
     },
 
     // Функция проверяет наличие предыдущего активного пина
@@ -44,16 +46,21 @@
       currentActivePin = pin;
     },
 
-    // Функция открытия попапа мышкой
-    onPinItemClick: function (currentPinItem, currentOffer) {
-      window.map.openCard(currentPinItem, currentOffer);
-    },
+    deactivatePin: function () {
+      currentActivePin.classList.remove('map__pin--active');
+      currentActivePin = false;
+    }
+  };
 
-    // Функция открытия попапа с клавиатуры
-    onPinItemPress: function (evt, currentPinItem, currentOffer) {
-      if (evt.keyCode === ENTER_KEYCODE) {
-        window.map.openCard(currentPinItem, currentOffer);
-      }
+  // Функция открытия попапа мышкой
+  var onPinItemClick = function (currentPinItem, currentOffer) {
+    window.card.openPopup(currentPinItem, currentOffer);
+  };
+
+  // Функция открытия попапа с клавиатуры
+  var onPinItemPress = function (evt, currentPinItem, currentOffer) {
+    if (evt.keyCode === ENTER_KEYCODE) {
+      window.card.openPopup(currentPinItem, currentOffer);
     }
   };
 })();

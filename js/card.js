@@ -7,12 +7,15 @@
     house: 'Дом',
     palace: 'Дворец'
   };
+  var ENTER_KEYCODE = 13;
+  var ESC_KEYCODE = 27;
   var map = document.querySelector('.map');
-  var cardTemplate = document.querySelector('template').content.querySelector('.map__card');
-  var card = cardTemplate.cloneNode(true);
+  var popupTemplate = document.querySelector('template').content.querySelector('.map__card');
+  var popup = popupTemplate.cloneNode(true);
+  var popupCloseButton = popup.querySelector('.popup__close');
 
-  window.cardModule = {
-    // Функция для создания рандомно полученные списки удобства в элементы списка li
+  window.card = {
+    // Функция для занесения рандомных списков удобства в элементы списка li
     getFeaturesList: function (features) {
       var featuresElement = '';
       features.forEach(function (item) {
@@ -22,32 +25,67 @@
     },
 
     // Функция находит нужные селекторы в клонированном шаблоне и заполняет их соответствующими данными
-    createCard: function (object) {
-      card.querySelector('.popup__avatar').setAttribute('src', object.author.avatar);
-      card.querySelector('h3').textContent = object.offer.title;
-      card.querySelector('p small').textContent = object.offer.address;
-      card.querySelector('.popup__price').textContent = object.offer.price + '\u20BD/ночь';
-      card.querySelector('h4').textContent = TYPE_OFFER_VALUE[object.offer.type];
-      card.querySelector('p:nth-of-type(3)').textContent = object.offer.rooms + ' для ' + object.offer.guests + ' гостей';
-      card.querySelector('p:nth-of-type(4)').textContent = 'Заезд после ' + object.offer.checkin + ', выезд до ' + object.offer.checkout;
-      card.querySelector('.popup__features').innerHTML = '';
-      card.querySelector('.popup__features').insertAdjacentHTML('beforeEnd', this.getFeaturesList(object.offer.features));
-      card.querySelector('p:nth-of-type(5)').textContent = object.offer.description;
-      card.classList.remove('hidden');
-      return card;
+    createPopup: function (object) {
+      popup.querySelector('.popup__avatar').setAttribute('src', object.author.avatar);
+      popup.querySelector('h3').textContent = object.offer.title;
+      popup.querySelector('p small').textContent = object.offer.address;
+      popup.querySelector('.popup__price').textContent = object.offer.price + '\u20BD/ночь';
+      popup.querySelector('h4').textContent = TYPE_OFFER_VALUE[object.offer.type];
+      popup.querySelector('p:nth-of-type(3)').textContent = object.offer.rooms + ' для ' + object.offer.guests + ' гостей';
+      popup.querySelector('p:nth-of-type(4)').textContent = 'Заезд после ' + object.offer.checkin + ', выезд до ' + object.offer.checkout;
+      popup.querySelector('.popup__features').innerHTML = '';
+      popup.querySelector('.popup__features').insertAdjacentHTML('beforeEnd', this.getFeaturesList(object.offer.features));
+      popup.querySelector('p:nth-of-type(5)').textContent = object.offer.description;
+      popup.classList.remove('hidden');
+      return popup;
     },
 
     // Функция отрисовывает карточку объявления на основе первого объекта в массиве offers и добавляет ее в документ
-    renderCards: function (offers) {
-      this.createCard(offers[0]);
-      map.appendChild(card);
-      card.classList.add('hidden');
+    renderPopupCards: function (offers) {
+      this.createPopup(offers[0]);
+      map.appendChild(popup);
+      popup.classList.add('hidden');
     },
 
-    openCard: function (currentPinItem, currentOffer) {
+    // Функция заполняет карточку объявления данными и открывает ее, присваивая пину активный класс
+    openPopup: function (currentPinItem, currentOffer) {
       window.pin.activatePin(currentPinItem);
-      this.createCard(currentOffer);
-      card.classList.remove('hidden');
+      this.createPopup(currentOffer);
+      popup.classList.remove('hidden');
+    },
+
+    // Функция закрытия попапа
+    closePopup: function () {
+      popup.classList.add('hidden');
+      window.pin.deactivatePin();
     }
   };
+
+  // Функция закрытия попапа с помощью esc
+  var onPressEsc = function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      window.card.closePopup();
+    }
+  };
+
+  // Функция закрытия попапа мышкой
+  var onPopupCloseClick = function () {
+    window.card.closePopup();
+  };
+
+  // Функция закрытия попапа с помощью enter
+  var onPopupClosePressEnter = function (evt) {
+    if (evt.keyCode === ENTER_KEYCODE) {
+      window.card.closePopup();
+    }
+  };
+
+  // Закрытие попапа с помощью esc
+  document.addEventListener('keydown', onPressEsc);
+
+  // Закрытие попапа мышкой
+  popupCloseButton.addEventListener('click', onPopupCloseClick);
+
+  // Закрытие попапа с клавиатуры
+  popupCloseButton.addEventListener('keydown', onPopupClosePressEnter);
 })();
