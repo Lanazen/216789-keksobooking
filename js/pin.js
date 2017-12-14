@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var PIN_HEIGHT = 44;
+  var PIN_HEIGHT = 48;
   var ARROW_HEIGHT = 18;
   var ENTER_KEYCODE = 13;
   var pinTemplate = document.querySelector('template').content.querySelector('.map__pin');
@@ -21,7 +21,7 @@
 
     var pinImage = pinItem.querySelector('img');
     pinItem.style.left = offer.location.x + 'px';
-    pinItem.style.top = offer.location.y - PIN_HEIGHT / 2 + ARROW_HEIGHT + 'px';
+    pinItem.style.top = offer.location.y - PIN_HEIGHT / 2 - ARROW_HEIGHT + 'px';
     pinImage.src = offer.author.avatar;
     return pinItem;
   };
