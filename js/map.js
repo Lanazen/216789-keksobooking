@@ -2,10 +2,10 @@
 
 (function () {
   var ENTER_KEYCODE = 13;
-  var PIN_MAIN_HEIGHT = 65;
-  // PIN_MAIN_TAIL_HEIGHT = 22px;
-  var noticeForm = document.querySelector('.notice__form');
-  var inputAddress = noticeForm.querySelector('#address');
+  var PIN_MAIN_HEIGHT = 68;
+  var PIN_MAIN_WIDTH = 65;
+  var MAIN_ARROW_HEIGHT = 22;
+  var MAP_WIDTH = 1200;
   var map = document.querySelector('.map');
   var pinMain = map.querySelector('.map__pin--main');
 
@@ -14,11 +14,13 @@
 
   // Функция активации карты для пользователя
   var openMap = function () {
-    map.classList.remove('map--faded');
-    var offers = window.data;
-    window.pin.renderPins(offers);
-    window.card.appendPopupElement(offers);
-    window.form.activateForm();
+    if (map.classList.contains('map--faded')) {
+      map.classList.remove('map--faded');
+      var offers = window.data;
+      window.pin.renderPins(offers);
+      window.card.appendPopupElement(offers);
+      window.form.activateForm();
+    }
   };
 
   // Функция активации карты мышкой
@@ -37,6 +39,7 @@
   var onPinMainMouseDown = function (evt) {
     evt.preventDefault();
 
+    var inputAddress = window.form.noticeForm.querySelector('#address');
     var startCoords = {
       x: evt.clientX,
       y: evt.clientY
@@ -59,11 +62,11 @@
       var coordY = pinMain.offsetTop - shift.y;
       var coordX = pinMain.offsetLeft - shift.x;
 
-      if (coordY >= 100 + PIN_MAIN_HEIGHT && coordY <= 500 + PIN_MAIN_HEIGHT) {
+      if (coordX >= PIN_MAIN_WIDTH / 2 && coordX <= MAP_WIDTH - PIN_MAIN_WIDTH / 2 && coordY >= 100 - PIN_MAIN_HEIGHT / 2 - MAIN_ARROW_HEIGHT && coordY <= 500 - PIN_MAIN_HEIGHT / 2 - MAIN_ARROW_HEIGHT) {
         pinMain.style.top = coordY + 'px';
+        pinMain.style.left = coordX + 'px';
+        inputAddress.value = 'x: ' + coordX + ', y: ' + (coordY + PIN_MAIN_HEIGHT / 2 + MAIN_ARROW_HEIGHT);
       }
-      pinMain.style.left = coordX + 'px';
-      inputAddress.value = 'x: ' + coordX + ', y: ' + coordY;
     };
 
     // Прекращение обработки событий при отпускании мыши

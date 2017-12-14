@@ -142,6 +142,8 @@
   selectRoomNumber.addEventListener('change', onChangeRoomNumber);
 
   window.form = {
+    noticeForm: document.querySelector('.notice__form'),
+
     activateForm: function () {
       noticeForm.classList.remove('notice__form--disabled');
       formFieldset.forEach(function (item) {
