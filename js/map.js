@@ -6,11 +6,16 @@
   var PIN_MAIN_WIDTH = 65;
   var MAIN_ARROW_HEIGHT = 22;
   var MAP_WIDTH = 1200;
+  var BORDER_BOTTOM = 100;
+  var BORDER_TOP = 500;
+  var COORD_BORDER = {
+    minY: BORDER_BOTTOM - PIN_MAIN_HEIGHT / 2 - MAIN_ARROW_HEIGHT,
+    maxY: BORDER_TOP - PIN_MAIN_HEIGHT / 2 - MAIN_ARROW_HEIGHT,
+    minX: PIN_MAIN_WIDTH / 2,
+    maxX: MAP_WIDTH - PIN_MAIN_WIDTH / 2
+  };
   var map = document.querySelector('.map');
   var pinMain = map.querySelector('.map__pin--main');
-
-  pinMain.setAttribute('draggable', 'true');
-  map.setAttribute('dropzone', 'move');
 
   // Функция активации карты для пользователя
   var openMap = function () {
@@ -20,6 +25,8 @@
       window.pin.renderPins(offers);
       window.card.appendPopupElement(offers);
       window.form.activateForm();
+      pinMain.setAttribute('draggable', 'true');
+      map.setAttribute('dropzone', 'move');
     }
   };
 
@@ -62,7 +69,7 @@
       var coordY = pinMain.offsetTop - shift.y;
       var coordX = pinMain.offsetLeft - shift.x;
 
-      if (coordX >= PIN_MAIN_WIDTH / 2 && coordX <= MAP_WIDTH - PIN_MAIN_WIDTH / 2 && coordY >= 100 - PIN_MAIN_HEIGHT / 2 - MAIN_ARROW_HEIGHT && coordY <= 500 - PIN_MAIN_HEIGHT / 2 - MAIN_ARROW_HEIGHT) {
+      if (coordX >= COORD_BORDER.minX && coordX <= COORD_BORDER.maxX && coordY >= COORD_BORDER.minY && coordY <= COORD_BORDER.maxY) {
         pinMain.style.top = coordY + 'px';
         pinMain.style.left = coordX + 'px';
         inputAddress.value = 'x: ' + coordX + ', y: ' + (coordY + PIN_MAIN_HEIGHT / 2 + MAIN_ARROW_HEIGHT);
