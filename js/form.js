@@ -83,8 +83,22 @@
     inputMinPrice.placeholder = inputMinPrice.min;
   };
 
+  // Синхронизация поля «Тип жилья» с минимальной ценой
   var onChangeType = function () {
     window.synchronizeFields(inputMinPrice, selectHouseType, HousePriceSync);
+  };
+
+  // Функция синхронизации количества комнат с количеством гостей
+  var RoomGuestsSync = function () {
+    numberOfGuests.forEach(function (item) {
+      item.selected = ~ROOMS_CAPACITY[selectRoomNumber.value].indexOf(item.value);
+      item.hidden = !~ROOMS_CAPACITY[selectRoomNumber.value].indexOf(item.value);
+    });
+  };
+
+  // Синхронизация количества комнат и гостей
+  var onChangeRoomNumber = function () {
+    window.synchronizeFields(selectRoomNumber, numberOfGuests, RoomGuestsSync);
   };
 
   // Функция проверки на валидность заголовка объявления
@@ -115,14 +129,6 @@
       inputMinPrice.setCustomValidity('');
       inputMinPrice.style.borderColor = 'none';
     }
-  };
-
-  // Функция синхронизации количества комнат с количеством гостей
-  var onChangeRoomNumber = function (evt) {
-    numberOfGuests.forEach(function (item) {
-      item.selected = ~ROOMS_CAPACITY[evt.target.value].indexOf(item.value);
-      item.hidden = !~ROOMS_CAPACITY[evt.target.value].indexOf(item.value);
-    });
   };
 
   /* ======== Обработка событий ======== */
