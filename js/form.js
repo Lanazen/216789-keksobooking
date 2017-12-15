@@ -69,18 +69,22 @@
 
   // Синхронизация поля «время выезда» при введенном поле «время заезда»
   var onChangeCheckin = function () {
-    timeSync(selectTimein, selectTimeout);
+    window.synchronizeFields(selectTimein, selectTimeout, timeSync);
   };
 
   // Синхронизация поля «время заезда» при введенном поле «время выезда»
-  var onChangeCheckout = function (evt) {
-    selectTimein.value = evt.target.value;
+  var onChangeCheckout = function () {
+    window.synchronizeFields(selectTimeout, selectTimein, timeSync);
   };
 
   // Функция для синхронизации поля «Тип жилья» с минимальной ценой
-  var onChangeType = function () {
+  var HousePriceSync = function () {
     inputMinPrice.min = HOUSE_TYPE_MIN_PRICE[selectHouseType.value];
     inputMinPrice.placeholder = inputMinPrice.min;
+  };
+
+  var onChangeType = function () {
+    window.synchronizeFields(inputMinPrice, selectHouseType, HousePriceSync);
   };
 
   // Функция проверки на валидность заголовка объявления
