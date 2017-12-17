@@ -50,10 +50,10 @@
     inputMinPrice.setAttribute('min', '0');
     inputMinPrice.setAttribute('max', '1000000');
     inputMinPrice.setAttribute('value', '1000');
-    numberOfGuests[0].setAttribute('hidden', 'true');
-    numberOfGuests[1].setAttribute('hidden', 'true');
+    numberOfGuests[0].setAttribute('disabled', 'true');
+    numberOfGuests[1].setAttribute('disabled', 'true');
     numberOfGuests[2].setAttribute('selected', 'true');
-    numberOfGuests[3].setAttribute('hidden', 'true');
+    numberOfGuests[3].setAttribute('disabled', 'true');
   };
 
   setNoticeForm();
@@ -92,7 +92,7 @@
   var RoomGuestsSync = function () {
     numberOfGuests.forEach(function (item) {
       item.selected = ~ROOMS_CAPACITY[selectRoomNumber.value].indexOf(item.value);
-      item.hidden = !~ROOMS_CAPACITY[selectRoomNumber.value].indexOf(item.value);
+      item.disabled = !~ROOMS_CAPACITY[selectRoomNumber.value].indexOf(item.value);
     });
   };
 
