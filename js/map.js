@@ -38,26 +38,7 @@
 
   // Функция выводит сообщение при ошибке соединения
   var onErrorLoad = function (errorMessage) {
-    var errorPopup = document.createElement('div');
-    errorPopup.style.position = 'fixed';
-    errorPopup.style.top = '35%';
-    errorPopup.style.left = '50%';
-    errorPopup.style.transform = 'translate(-50%, -35%)';
-    errorPopup.style.width = '500px';
-    errorPopup.style.height = '30px';
-    errorPopup.style.padding = '25px';
-    errorPopup.style.textAlign = 'center';
-    errorPopup.style.fontSize = '20px';
-    errorPopup.style.fontWeight = '700';
-    errorPopup.textContent = errorMessage;
-    errorPopup.style.backgroundColor = '#ffffff';
-    errorPopup.style.border = '2px solid #000000';
-    errorPopup.style.borderRadius = '10px';
-    errorPopup.style.zIndex = '10';
-    document.body.insertAdjacentElement('afterBegin', errorPopup);
-    setTimeout(function () {
-      document.body.removeChild(errorPopup);
-    }, 5000);
+    window.backend.error(errorMessage);
   };
 
   // Функция активации карты мышкой
@@ -72,11 +53,13 @@
     }
   };
 
+  var inputAddress = window.form.noticeForm.querySelector('#address');
+  inputAddress.value = 'x: ' + pinMain.offsetLeft + ', y: ' + (pinMain.offsetTop + PIN_MAIN_HEIGHT / 2 + MAIN_ARROW_HEIGHT);
+
   // Функция обработки события начала перетаскивания главного пина
   var onPinMainMouseDown = function (evt) {
     evt.preventDefault();
 
-    var inputAddress = window.form.noticeForm.querySelector('#address');
     var startCoords = {
       x: evt.clientX,
       y: evt.clientY
