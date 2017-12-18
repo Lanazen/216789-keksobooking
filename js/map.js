@@ -16,12 +16,12 @@
   };
   var map = document.querySelector('.map');
   var pinMain = map.querySelector('.map__pin--main');
+  var offers = [];
 
   // Функция активации карты для пользователя
   var openMap = function () {
     if (map.classList.contains('map--faded')) {
       map.classList.remove('map--faded');
-      var offers = window.data;
       window.pin.renderPins(offers);
       window.card.appendPopupElement(offers);
       window.form.activateForm();
@@ -30,15 +30,45 @@
     }
   };
 
+  // Функция делает страницу доступной для пользователя при успешной загрузки данных с сервера
+  var onSuccessLoad = function (loadedData) {
+    offers = loadedData;
+    openMap();
+  };
+
+  // Функция выводит сообщение при ошибке соединения
+  var onErrorLoad = function (errorMessage) {
+    var errorPopup = document.createElement('div');
+    errorPopup.style.position = 'fixed';
+    errorPopup.style.top = '35%';
+    errorPopup.style.left = '50%';
+    errorPopup.style.transform = 'translate(-50%, -35%)';
+    errorPopup.style.width = '500px';
+    errorPopup.style.height = '30px';
+    errorPopup.style.padding = '25px';
+    errorPopup.style.textAlign = 'center';
+    errorPopup.style.fontSize = '20px';
+    errorPopup.style.fontWeight = '700';
+    errorPopup.textContent = errorMessage;
+    errorPopup.style.backgroundColor = '#ffffff';
+    errorPopup.style.border = '2px solid #000000';
+    errorPopup.style.borderRadius = '10px';
+    errorPopup.style.zIndex = '10';
+    document.body.insertAdjacentElement('afterBegin', errorPopup);
+    setTimeout(function () {
+      document.body.removeChild(errorPopup);
+    }, 5000);
+  };
+
   // Функция активации карты мышкой
   var onPinMainClick = function () {
-    openMap();
+    window.backend.load(onSuccessLoad, onErrorLoad);
   };
 
   // Функция активации карты клавиатурой
   var onPinMainPressEnter = function (evt) {
     if (evt.keyCode === ENTER_KEYCODE) {
-      openMap();
+      window.backend.load(onSuccessLoad, onErrorLoad);
     }
   };
 
