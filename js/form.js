@@ -4,6 +4,8 @@
 
   /* ======== Константы ======== */
 
+  var PIN_MAIN_HEIGHT = 68;
+  var MAIN_ARROW_HEIGHT = 22;
   var HOUSE_TYPE_MIN_PRICE = {
     bungalo: '0',
     flat: '1000',
@@ -30,6 +32,12 @@
   var selectRoomNumber = noticeForm.querySelector('#room_number');
   var selectCapacity = noticeForm.querySelector('#capacity');
   var numberOfGuests = selectCapacity.querySelectorAll('option');
+  var map = document.querySelector('.map');
+  var pinMain = map.querySelector('.map__pin--main');
+  var startMainPinCoords = {
+    addressX: pinMain.offsetLeft,
+    addressY: pinMain.offsetTop + PIN_MAIN_HEIGHT / 2 + MAIN_ARROW_HEIGHT
+  };
 
   /* ======== Функции ======== */
 
@@ -133,11 +141,12 @@
 
   var onSuccessSend = function () {
     noticeForm.reset();
-    // console.log('Данные успешно отправлены');
+    pinMain.style.top = startMainPinCoords.addressY + 'px';
+    pinMain.style.left = startMainPinCoords.addressX + 'px';
   };
 
-  var onErrorSend = function () {
-    // console.log('Произошла ошибка');
+  var onErrorSend = function (errorMessage) {
+    window.backend.error(errorMessage);
   };
 
   var onButtonSubmit = function (evt) {
