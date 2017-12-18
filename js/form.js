@@ -131,6 +131,20 @@
     }
   };
 
+  var onSuccessSend = function () {
+    noticeForm.reset();
+    // console.log('Данные успешно отправлены');
+  };
+
+  var onErrorSend = function () {
+    // console.log('Произошла ошибка');
+  };
+
+  var onButtonSubmit = function (evt) {
+    window.backend.save(new FormData(noticeForm), onSuccessSend, onErrorSend);
+    evt.preventDefault();
+  };
+
   /* ======== Обработка событий ======== */
 
   // Выбор времени заезда
@@ -150,6 +164,9 @@
 
   // Выбор количества комнат
   selectRoomNumber.addEventListener('change', onChangeRoomNumber);
+
+  // Отправка данных формы на сервер
+  noticeForm.addEventListener('submit', onButtonSubmit);
 
   window.form = {
     noticeForm: document.querySelector('.notice__form'),
