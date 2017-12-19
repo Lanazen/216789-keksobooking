@@ -41,7 +41,7 @@
   window.pin = {
     // Функция отрисовывает каждый пин на карте и передает готовую ноду в функцию generatePin
     renderPins: function (items) {
-      items.forEach(function (currentItem) {
+      [].forEach.call(items, function (currentItem) {
         pinFragment.appendChild(generatePin(currentItem));
       });
       pinsContainer.appendChild(pinFragment);

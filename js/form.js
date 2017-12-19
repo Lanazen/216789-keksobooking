@@ -42,7 +42,7 @@
   /* ======== Функции ======== */
 
   var setNoticeForm = function () {
-    formFieldset.forEach(function (item) {
+    [].forEach.call(formFieldset, function (item) {
       item.setAttribute('disabled', 'true');
     });
     noticeForm.setAttribute('action', 'https://js.dump.academy/keksobooking');
@@ -98,7 +98,7 @@
 
   // Функция синхронизации количества комнат с количеством гостей
   var RoomGuestsSync = function () {
-    numberOfGuests.forEach(function (item) {
+    [].forEach.call(numberOfGuests, function (item) {
       item.selected = ~ROOMS_CAPACITY[selectRoomNumber.value].indexOf(item.value);
       item.disabled = !~ROOMS_CAPACITY[selectRoomNumber.value].indexOf(item.value);
     });
@@ -182,7 +182,7 @@
 
     activateForm: function () {
       noticeForm.classList.remove('notice__form--disabled');
-      formFieldset.forEach(function (item) {
+      [].forEach.call(formFieldset, function (item) {
         item.removeAttribute('disabled');
       });
     }
