@@ -16,12 +16,12 @@
   };
   var map = document.querySelector('.map');
   var pinMain = map.querySelector('.map__pin--main');
+  var offers = [];
 
   // Функция активации карты для пользователя
   var openMap = function () {
     if (map.classList.contains('map--faded')) {
       map.classList.remove('map--faded');
-      var offers = window.data;
       window.pin.renderPins(offers);
       window.card.appendPopupElement(offers);
       window.form.activateForm();
@@ -30,23 +30,36 @@
     }
   };
 
+  // Функция делает страницу доступной для пользователя при успешной загрузки данных с сервера
+  var onSuccessLoad = function (loadedData) {
+    offers = loadedData;
+    openMap();
+  };
+
+  // Функция выводит сообщение при ошибке соединения
+  var onErrorLoad = function (errorMessage) {
+    window.backend.error(errorMessage);
+  };
+
   // Функция активации карты мышкой
   var onPinMainClick = function () {
-    openMap();
+    window.backend.load(onSuccessLoad, onErrorLoad);
   };
 
   // Функция активации карты клавиатурой
   var onPinMainPressEnter = function (evt) {
     if (evt.keyCode === ENTER_KEYCODE) {
-      openMap();
+      window.backend.load(onSuccessLoad, onErrorLoad);
     }
   };
+
+  var inputAddress = window.form.noticeForm.querySelector('#address');
+  inputAddress.value = 'x: ' + pinMain.offsetLeft + ', y: ' + (pinMain.offsetTop + PIN_MAIN_HEIGHT / 2 + MAIN_ARROW_HEIGHT);
 
   // Функция обработки события начала перетаскивания главного пина
   var onPinMainMouseDown = function (evt) {
     evt.preventDefault();
 
-    var inputAddress = window.form.noticeForm.querySelector('#address');
     var startCoords = {
       x: evt.clientX,
       y: evt.clientY

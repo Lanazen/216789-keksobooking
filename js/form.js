@@ -4,6 +4,8 @@
 
   /* ======== Константы ======== */
 
+  var PIN_MAIN_HEIGHT = 68;
+  var MAIN_ARROW_HEIGHT = 22;
   var HOUSE_TYPE_MIN_PRICE = {
     bungalo: '0',
     flat: '1000',
@@ -30,11 +32,17 @@
   var selectRoomNumber = noticeForm.querySelector('#room_number');
   var selectCapacity = noticeForm.querySelector('#capacity');
   var numberOfGuests = selectCapacity.querySelectorAll('option');
+  var map = document.querySelector('.map');
+  var pinMain = map.querySelector('.map__pin--main');
+  var startMainPinCoords = {
+    addressX: pinMain.offsetLeft,
+    addressY: pinMain.offsetTop + PIN_MAIN_HEIGHT / 2 + MAIN_ARROW_HEIGHT
+  };
 
   /* ======== Функции ======== */
 
   var setNoticeForm = function () {
-    formFieldset.forEach(function (item) {
+    [].forEach.call(formFieldset, function (item) {
       item.setAttribute('disabled', 'true');
     });
     noticeForm.setAttribute('action', 'https://js.dump.academy/keksobooking');
@@ -50,10 +58,10 @@
     inputMinPrice.setAttribute('min', '0');
     inputMinPrice.setAttribute('max', '1000000');
     inputMinPrice.setAttribute('value', '1000');
-    numberOfGuests[0].setAttribute('hidden', 'true');
-    numberOfGuests[1].setAttribute('hidden', 'true');
+    numberOfGuests[0].setAttribute('disabled', 'true');
+    numberOfGuests[1].setAttribute('disabled', 'true');
     numberOfGuests[2].setAttribute('selected', 'true');
-    numberOfGuests[3].setAttribute('hidden', 'true');
+    numberOfGuests[3].setAttribute('disabled', 'true');
   };
 
   setNoticeForm();
@@ -90,9 +98,9 @@
 
   // Функция синхронизации количества комнат с количеством гостей
   var RoomGuestsSync = function () {
-    numberOfGuests.forEach(function (item) {
+    [].forEach.call(numberOfGuests, function (item) {
       item.selected = ~ROOMS_CAPACITY[selectRoomNumber.value].indexOf(item.value);
-      item.hidden = !~ROOMS_CAPACITY[selectRoomNumber.value].indexOf(item.value);
+      item.disabled = !~ROOMS_CAPACITY[selectRoomNumber.value].indexOf(item.value);
     });
   };
 
@@ -131,6 +139,21 @@
     }
   };
 
+  var onSuccessSend = function () {
+    noticeForm.reset();
+    pinMain.style.top = startMainPinCoords.addressY + 'px';
+    pinMain.style.left = startMainPinCoords.addressX + 'px';
+  };
+
+  var onErrorSend = function (errorMessage) {
+    window.backend.error(errorMessage);
+  };
+
+  var onButtonSubmit = function (evt) {
+    window.backend.save(new FormData(noticeForm), onSuccessSend, onErrorSend);
+    evt.preventDefault();
+  };
+
   /* ======== Обработка событий ======== */
 
   // Выбор времени заезда
@@ -151,12 +174,15 @@
   // Выбор количества комнат
   selectRoomNumber.addEventListener('change', onChangeRoomNumber);
 
+  // Отправка данных формы на сервер
+  noticeForm.addEventListener('submit', onButtonSubmit);
+
   window.form = {
     noticeForm: document.querySelector('.notice__form'),
 
     activateForm: function () {
       noticeForm.classList.remove('notice__form--disabled');
-      formFieldset.forEach(function (item) {
+      [].forEach.call(formFieldset, function (item) {
         item.removeAttribute('disabled');
       });
     }
