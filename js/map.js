@@ -20,20 +20,19 @@
 
   // Функция активации карты для пользователя
   var openMap = function () {
-    if (map.classList.contains('map--faded')) {
-      map.classList.remove('map--faded');
-      window.pin.renderPins(offers);
-      window.card.appendPopupElement(offers);
-      window.form.activateForm();
-      pinMain.setAttribute('draggable', 'true');
-      map.setAttribute('dropzone', 'move');
-    }
+    map.classList.remove('map--faded');
+    window.pin.renderPins(offers);
+    window.card.appendPopupElement(offers);
+    window.form.activateForm();
+    pinMain.setAttribute('draggable', 'true');
+    map.setAttribute('dropzone', 'move');
   };
 
   // Функция делает страницу доступной для пользователя при успешной загрузки данных с сервера
   var onSuccessLoad = function (loadedData) {
     offers = loadedData;
     openMap();
+    window.filtering.start(loadedData);
   };
 
   // Функция выводит сообщение при ошибке соединения
@@ -42,13 +41,15 @@
   };
 
   // Функция активации карты мышкой
-  var onPinMainClick = function () {
-    window.backend.load(onSuccessLoad, onErrorLoad);
+  var onPinMainMouseUp = function () {
+    if (map.classList.contains('map--faded')) {
+      window.backend.load(onSuccessLoad, onErrorLoad);
+    }
   };
 
   // Функция активации карты клавиатурой
   var onPinMainPressEnter = function (evt) {
-    if (evt.keyCode === ENTER_KEYCODE) {
+    if (evt.keyCode === ENTER_KEYCODE && map.classList.contains('map--faded')) {
       window.backend.load(onSuccessLoad, onErrorLoad);
     }
   };
@@ -102,7 +103,7 @@
   };
 
   // Активация карты мышкой
-  pinMain.addEventListener('mouseup', onPinMainClick);
+  pinMain.addEventListener('mouseup', onPinMainMouseUp);
 
   // Активация карты клавиатурой
   pinMain.addEventListener('keydown', onPinMainPressEnter);
