@@ -2,6 +2,11 @@
 
 (function () {
 
+  var MAX_PIN_AMOUNT = 5;
+  var PriceValue = {
+    LOW: 10000,
+    HIGH: 50000
+  };
   var housingType = document.querySelector('#housing-type');
   var housingPrice = document.querySelector('#housing-price');
   var housingRooms = document.querySelector('#housing-rooms');
@@ -15,43 +20,30 @@
   // Полная копия массива данных перед началом каждой фильтрации
   var loadedOffers = [];
 
-  // Функция применяет фильтр к полям выбора типа жилья
-  var selectHouseTypeFilter = function () {
-    if (housingType.value !== 'any') {
+  // Функция применяет фильтр к полям выбора типа жилья, количества комнат и гостей
+  var selectFilter = function (filter, data) {
+    if (filter.value !== 'any') {
       loadedOffers = loadedOffers.filter(function (object) {
-        return object.offer.type === housingType.value;
+        return object.offer[data].toString() === filter.value;
       });
     }
   };
 
-  var selectPriceFilter = function (price) {
-    if (housingPrice.value === 'middle') {
-      return (price >= 10000) && (price < 50000);
-    } else if (housingPrice.value === 'low') {
-      return price < 10000;
-    } else if (housingPrice.value === 'high') {
-      return price >= 50000;
-    } else {
+  // Функция применяет фильтр к полям выбора цены
+  var priceFilter = function (price) {
+    loadedOffers = loadedOffers.filter(function (object) {
+      if (price.value === 'middle') {
+        return object.offer.price <= PriceValue.HIGH && object.offer.price >= PriceValue.LOW;
+      } else if (price.value === 'low') {
+        return object.offer.price < PriceValue.LOW;
+      } else if (price.value === 'high') {
+        return object.offer.price > PriceValue.HIGH;
+      }
       return true;
-    }
+    });
   };
 
-  var selectRoomsFilter = function () {
-    if (housingRooms.value !== 'any') {
-      loadedOffers = loadedOffers.filter(function (object) {
-        return object.offer.rooms === housingRooms.value;
-      });
-    }
-  };
-
-  var selectGuestsFilter = function () {
-    if (housingGuests.value !== 'any') {
-      loadedOffers = loadedOffers.filter(function (object) {
-        return object.offer.guests === housingGuests.value;
-      });
-    }
-  };
-
+  // Функция применяет фильтр к выбору удобств
   var checkboxFilter = function (checkbox) {
     checkbox.forEach(function (item) {
       if (item.checked) {
@@ -60,7 +52,6 @@
         });
       }
     });
-    return loadedOffers;
   };
 
   // Функция очищает карту от всех пинов, кроме pin_main
@@ -72,12 +63,14 @@
   // Функция для применения фильтров и отрисовки подходящих пинов на карте
   var updatePins = function () {
     clearMap();
-    selectRoomsFilter();
-    selectGuestsFilter();
-    selectHouseTypeFilter();
-    selectPriceFilter(housingPrice);
+    selectFilter(housingType, 'type');
+    selectFilter(housingRooms, 'rooms');
+    selectFilter(housingGuests, 'guests');
+    priceFilter(housingPrice);
     checkboxFilter(housingFeatures);
-    window.pin.renderPins(loadedOffers);
+    if (loadedOffers.length > MAX_PIN_AMOUNT) {
+      loadedOffers = loadedOffers.slice(0, MAX_PIN_AMOUNT);
+    } window.pin.render(loadedOffers);
   };
 
   window.filtering = {
@@ -89,7 +82,7 @@
       function onSelectTypeChange() {
         loadedOffers = window.filtering.loadedData.slice();
         updatePins();
-        window.debounce.funcDebounce(updatePins);
+        window.debounce(updatePins);
       }
 
       filterForm.addEventListener('change', onSelectTypeChange);
