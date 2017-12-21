@@ -46,6 +46,7 @@
     errorPopup.style.border = '2px solid #000000';
     errorPopup.style.borderRadius = '10px';
     errorPopup.style.zIndex = '10';
+    errorPopup.classList.add('hidden');
     document.body.insertAdjacentElement('afterBegin', errorPopup);
   };
 
@@ -67,10 +68,11 @@
     },
 
     // Функция вывода сообщения об ошибке
-    error: function (errorMessage) {
+    handleError: function (errorMessage) {
       setErrorPopup(errorMessage);
+      errorPopup.classList.remove('hidden');
       setTimeout(function () {
-        document.body.removeChild(errorPopup);
+        errorPopup.classList.add('hidden');
       }, ERROR_POPUP_TIMEOUT);
     }
   };

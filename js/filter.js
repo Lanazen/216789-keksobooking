@@ -31,7 +31,7 @@
   };
 
   // Функция применяет фильтр к полям выбора цены
-  var priceFilter = function (price) {
+  var selectPriceFilter = function (price) {
     loadedOffers = loadedOffers.filter(function (object) {
       if (price.value === 'middle') {
         return object.offer.price <= PriceValue.HIGH && object.offer.price >= PriceValue.LOW;
@@ -45,11 +45,11 @@
   };
 
   // Функция применяет фильтр к выбору удобств
-  var checkboxFilter = function (checkbox) {
-    [].forEach.call(checkbox, function (item) {
-      if (item.checked) {
+  var selectCheckboxFilter = function (items) {
+    [].forEach.call(items, function (checkbox) {
+      if (checkbox.checked) {
         loadedOffers = loadedOffers.filter(function (object) {
-          return object.offer.features.indexOf(item.value) !== -1;
+          return object.offer.features.indexOf(checkbox.value) !== -1;
         });
       }
     });
@@ -67,21 +67,21 @@
     selectFilter(housingType, 'type');
     selectFilter(housingRooms, 'rooms');
     selectFilter(housingGuests, 'guests');
-    priceFilter(housingPrice);
-    checkboxFilter(housingFeatures);
+    selectPriceFilter(housingPrice);
+    selectCheckboxFilter(housingFeatures);
     if (loadedOffers.length > MAX_PIN_AMOUNT) {
       loadedOffers = loadedOffers.slice(0, MAX_PIN_AMOUNT);
     } window.pin.render(loadedOffers);
   };
 
-  window.filtering = {
+  window.filter = {
     loadedData: [],
     start: function (loadedData) {
       this.loadedData = loadedData.slice();
 
       // Функция-обработчик для применения фильтров
       function onSelectTypeChange() {
-        loadedOffers = window.filtering.loadedData.slice();
+        loadedOffers = window.filter.loadedData.slice();
         updatePins();
         window.debounce(updatePins);
       }

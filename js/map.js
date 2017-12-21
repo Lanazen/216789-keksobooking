@@ -16,8 +16,9 @@
     MAX_X: MAP_WIDTH - PIN_MAIN_WIDTH / 2
   };
   var map = document.querySelector('.map');
-  var noticeForm = document.querySelector('.notice__form');
   var pinMain = map.querySelector('.map__pin--main');
+  var pinX = pinMain.offsetLeft;
+  var pinY = pinMain.offsetTop + PIN_MAIN_HEIGHT / 2 + MAIN_ARROW_HEIGHT;
   var offers = [];
 
   // Функция активации карты для пользователя
@@ -26,6 +27,7 @@
     window.pin.render(offers.slice(0, MAX_PIN_AMOUNT));
     window.card.append(map);
     window.form.activate();
+    window.form.setAddress(pinX, pinY);
     pinMain.setAttribute('draggable', 'true');
     map.setAttribute('dropzone', 'move');
   };
@@ -34,12 +36,12 @@
   var onSuccessLoad = function (loadedData) {
     offers = loadedData;
     openMap();
-    window.filtering.start(loadedData);
+    window.filter.start(loadedData);
   };
 
   // Функция выводит сообщение при ошибке соединения
   var onErrorLoad = function (errorMessage) {
-    window.backend.error(errorMessage);
+    window.backend.handleError(errorMessage);
   };
 
   // Функция активации карты мышкой
@@ -55,9 +57,6 @@
       window.backend.load(onSuccessLoad, onErrorLoad);
     }
   };
-
-  var inputAddress = noticeForm.querySelector('#address');
-  inputAddress.value = 'x: ' + pinMain.offsetLeft + ', y: ' + (pinMain.offsetTop + PIN_MAIN_HEIGHT / 2 + MAIN_ARROW_HEIGHT);
 
   // Функция обработки события начала перетаскивания главного пина
   var onPinMainMouseDown = function (evt) {
@@ -82,13 +81,14 @@
         y: moveEvt.clientY
       };
 
-      var coordY = pinMain.offsetTop - shift.y;
       var coordX = pinMain.offsetLeft - shift.x;
+      var coordY = pinMain.offsetTop - shift.y;
+      var coordPinY = coordY + PIN_MAIN_HEIGHT / 2 + MAIN_ARROW_HEIGHT;
 
       if (coordX >= CoordBorder.MIN_X && coordX <= CoordBorder.MAX_X && coordY >= CoordBorder.MIN_Y && coordY <= CoordBorder.MAX_Y) {
         pinMain.style.top = coordY + 'px';
         pinMain.style.left = coordX + 'px';
-        inputAddress.value = 'x: ' + coordX + ', y: ' + (coordY + PIN_MAIN_HEIGHT / 2 + MAIN_ARROW_HEIGHT);
+        window.form.setAddress(coordX, coordPinY);
       }
     };
 

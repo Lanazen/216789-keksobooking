@@ -70,33 +70,33 @@
   /* ======== Функции - обработчики событий ======== */
 
   // Функция для синхронизации полей «время заезда» и «время выезда»
-  var timeSync = function (inputField, inputValue) {
+  var syncTime = function (inputField, inputValue) {
     inputValue.value = inputField.value;
   };
 
   // Синхронизация поля «время выезда» при введенном поле «время заезда»
   var onChangeCheckin = function () {
-    window.synchronizeFields(selectTimein, selectTimeout, timeSync);
+    window.synchronizeFields(selectTimein, selectTimeout, syncTime);
   };
 
   // Синхронизация поля «время заезда» при введенном поле «время выезда»
   var onChangeCheckout = function () {
-    window.synchronizeFields(selectTimeout, selectTimein, timeSync);
+    window.synchronizeFields(selectTimeout, selectTimein, syncTime);
   };
 
   // Функция для синхронизации поля «Тип жилья» с минимальной ценой
-  var HousePriceSync = function () {
+  var syncHousePrice = function () {
     inputMinPrice.min = houseTypeMinPrice[selectHouseType.value];
     inputMinPrice.placeholder = inputMinPrice.min;
   };
 
   // Синхронизация поля «Тип жилья» с минимальной ценой
   var onChangeType = function () {
-    window.synchronizeFields(inputMinPrice, selectHouseType, HousePriceSync);
+    window.synchronizeFields(inputMinPrice, selectHouseType, syncHousePrice);
   };
 
   // Функция синхронизации количества комнат с количеством гостей
-  var RoomGuestsSync = function () {
+  var syncRoomGuests = function () {
     [].forEach.call(numberOfGuests, function (item) {
       item.selected = ~roomsCapacity[selectRoomNumber.value].indexOf(item.value);
       item.disabled = !~roomsCapacity[selectRoomNumber.value].indexOf(item.value);
@@ -105,7 +105,7 @@
 
   // Синхронизация количества комнат и гостей
   var onChangeRoomNumber = function () {
-    window.synchronizeFields(selectRoomNumber, numberOfGuests, RoomGuestsSync);
+    window.synchronizeFields(selectRoomNumber, numberOfGuests, syncRoomGuests);
   };
 
   // Функция проверки на валидность заголовка объявления
@@ -146,7 +146,7 @@
   };
 
   var onErrorSend = function () {
-    window.backend.error(errorMessage);
+    window.backend.handleError(errorMessage);
   };
 
   var onButtonSubmit = function (evt) {
@@ -178,6 +178,10 @@
   noticeForm.addEventListener('submit', onButtonSubmit);
 
   window.form = {
+    setAddress: function (valueX, valueY) {
+      inputAddress.setAttribute('value', 'x: ' + valueX + ', ' + 'y: ' + valueY);
+    },
+
     activate: function () {
       noticeForm.classList.remove('notice__form--disabled');
       [].forEach.call(formFieldset, function (item) {
