@@ -16,14 +16,13 @@
   var pinsContainer = document.querySelector('.map__pins');
   var pinMain = map.querySelector('.map__pin--main');
   var filterForm = map.querySelector('.map__filters');
-  var filter = filterForm.querySelector('.map__filter');
-  var data = filter.name.substr(8);
 
   // Полная копия массива данных перед началом каждой фильтрации
   var loadedOffers = [];
 
   // Функция применяет фильтр к полям выбора типа жилья, количества комнат и гостей
   var selectFilter = function (option) {
+    var data = option.name.substr(8);
     if (option.value !== 'any') {
       loadedOffers = loadedOffers.filter(function (object) {
         return object.offer[data].toString() === option.value;

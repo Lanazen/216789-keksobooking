@@ -34,6 +34,7 @@
   var numberOfGuests = selectCapacity.querySelectorAll('option');
   var map = document.querySelector('.map');
   var pinMain = map.querySelector('.map__pin--main');
+  var errorMessage = 'Произошла ошибка';
   var startMainPinCoords = {
     addressX: pinMain.offsetLeft,
     addressY: pinMain.offsetTop + PIN_MAIN_HEIGHT / 2 + MAIN_ARROW_HEIGHT
@@ -141,9 +142,10 @@
     noticeForm.reset();
     pinMain.style.top = startMainPinCoords.addressY + 'px';
     pinMain.style.left = startMainPinCoords.addressX + 'px';
+    inputAddress.setAttribute('value', 'x: ' + startMainPinCoords.addressX + ', ' + 'y: ' + startMainPinCoords.addressY);
   };
 
-  var onErrorSend = function (errorMessage) {
+  var onErrorSend = function () {
     window.backend.error(errorMessage);
   };
 
