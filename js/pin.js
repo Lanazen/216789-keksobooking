@@ -10,7 +10,7 @@
   var currentActivePin = false;
 
   // Функция клонирует ноду пина из шаблона и заполняет её данными
-  var generatePin = function (offer) {
+  var generate = function (offer) {
     var pinItem = pinTemplate.cloneNode(true);
 
     // Открытие попапа мышкой
@@ -28,27 +28,27 @@
 
   // Функция открытия попапа мышкой
   var onPinItemClick = function (currentPinItem, currentOffer) {
-    window.card.openPopup(currentPinItem, currentOffer);
+    window.card.open(currentPinItem, currentOffer);
   };
 
   // Функция открытия попапа с клавиатуры
   var onPinItemPress = function (evt, currentPinItem, currentOffer) {
     if (evt.keyCode === ENTER_KEYCODE) {
-      window.card.openPopup(currentPinItem, currentOffer);
+      window.card.open(currentPinItem, currentOffer);
     }
   };
 
   window.pin = {
     // Функция отрисовывает каждый пин на карте и передает готовую ноду в функцию generatePin
-    renderPins: function (items) {
+    render: function (items) {
       [].forEach.call(items, function (currentItem) {
-        pinFragment.appendChild(generatePin(currentItem));
+        pinFragment.appendChild(generate(currentItem));
       });
       pinsContainer.appendChild(pinFragment);
     },
 
     // Функция проверяет наличие предыдущего активного пина
-    activatePin: function (pin) {
+    activate: function (pin) {
       if (currentActivePin === false) {
         pin.classList.add('map__pin--active');
       } else {
@@ -58,7 +58,7 @@
       currentActivePin = pin;
     },
 
-    deactivatePin: function () {
+    deactivate: function () {
       if (currentActivePin !== false) {
         currentActivePin.classList.remove('map__pin--active');
         currentActivePin = false;

@@ -2,17 +2,17 @@
 
 (function () {
 
-  /* ======== Константы ======== */
+  /* ======== Константы и словари ======== */
 
   var PIN_MAIN_HEIGHT = 68;
   var MAIN_ARROW_HEIGHT = 22;
-  var HOUSE_TYPE_MIN_PRICE = {
+  var houseTypeMinPrice = {
     bungalo: '0',
     flat: '1000',
     house: '5000',
     palace: '10000'
   };
-  var ROOMS_CAPACITY = {
+  var roomsCapacity = {
     '1': ['1'],
     '2': ['1', '2'],
     '3': ['1', '2', '3'],
@@ -70,9 +70,7 @@
 
   // Функция для синхронизации полей «время заезда» и «время выезда»
   var timeSync = function (inputField, inputValue) {
-    var selectInput = false;
-    selectInput = inputField.value;
-    inputValue.value = selectInput;
+    inputValue.value = inputField.value;
   };
 
   // Синхронизация поля «время выезда» при введенном поле «время заезда»
@@ -87,7 +85,7 @@
 
   // Функция для синхронизации поля «Тип жилья» с минимальной ценой
   var HousePriceSync = function () {
-    inputMinPrice.min = HOUSE_TYPE_MIN_PRICE[selectHouseType.value];
+    inputMinPrice.min = houseTypeMinPrice[selectHouseType.value];
     inputMinPrice.placeholder = inputMinPrice.min;
   };
 
@@ -99,8 +97,8 @@
   // Функция синхронизации количества комнат с количеством гостей
   var RoomGuestsSync = function () {
     [].forEach.call(numberOfGuests, function (item) {
-      item.selected = ~ROOMS_CAPACITY[selectRoomNumber.value].indexOf(item.value);
-      item.disabled = !~ROOMS_CAPACITY[selectRoomNumber.value].indexOf(item.value);
+      item.selected = ~roomsCapacity[selectRoomNumber.value].indexOf(item.value);
+      item.disabled = !~roomsCapacity[selectRoomNumber.value].indexOf(item.value);
     });
   };
 
@@ -178,9 +176,7 @@
   noticeForm.addEventListener('submit', onButtonSubmit);
 
   window.form = {
-    noticeForm: document.querySelector('.notice__form'),
-
-    activateForm: function () {
+    activate: function () {
       noticeForm.classList.remove('notice__form--disabled');
       [].forEach.call(formFieldset, function (item) {
         item.removeAttribute('disabled');

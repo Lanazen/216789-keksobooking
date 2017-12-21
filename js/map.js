@@ -8,22 +8,24 @@
   var MAP_WIDTH = 1200;
   var BORDER_BOTTOM = 100;
   var BORDER_TOP = 500;
-  var COORD_BORDER = {
-    minY: BORDER_BOTTOM - PIN_MAIN_HEIGHT / 2 - MAIN_ARROW_HEIGHT,
-    maxY: BORDER_TOP - PIN_MAIN_HEIGHT / 2 - MAIN_ARROW_HEIGHT,
-    minX: PIN_MAIN_WIDTH / 2,
-    maxX: MAP_WIDTH - PIN_MAIN_WIDTH / 2
+  var MAX_PIN_AMOUNT = 5;
+  var CoordBorder = {
+    MIN_Y: BORDER_BOTTOM - PIN_MAIN_HEIGHT / 2 - MAIN_ARROW_HEIGHT,
+    MAX_Y: BORDER_TOP - PIN_MAIN_HEIGHT / 2 - MAIN_ARROW_HEIGHT,
+    MIN_X: PIN_MAIN_WIDTH / 2,
+    MAX_X: MAP_WIDTH - PIN_MAIN_WIDTH / 2
   };
   var map = document.querySelector('.map');
+  var noticeForm = document.querySelector('.notice__form');
   var pinMain = map.querySelector('.map__pin--main');
   var offers = [];
 
   // Функция активации карты для пользователя
   var openMap = function () {
     map.classList.remove('map--faded');
-    window.pin.renderPins(offers);
-    window.card.appendPopupElement(offers);
-    window.form.activateForm();
+    window.pin.render(offers.slice(0, MAX_PIN_AMOUNT));
+    window.card.append(map);
+    window.form.activate();
     pinMain.setAttribute('draggable', 'true');
     map.setAttribute('dropzone', 'move');
   };
@@ -54,7 +56,7 @@
     }
   };
 
-  var inputAddress = window.form.noticeForm.querySelector('#address');
+  var inputAddress = noticeForm.querySelector('#address');
   inputAddress.value = 'x: ' + pinMain.offsetLeft + ', y: ' + (pinMain.offsetTop + PIN_MAIN_HEIGHT / 2 + MAIN_ARROW_HEIGHT);
 
   // Функция обработки события начала перетаскивания главного пина
@@ -83,7 +85,7 @@
       var coordY = pinMain.offsetTop - shift.y;
       var coordX = pinMain.offsetLeft - shift.x;
 
-      if (coordX >= COORD_BORDER.minX && coordX <= COORD_BORDER.maxX && coordY >= COORD_BORDER.minY && coordY <= COORD_BORDER.maxY) {
+      if (coordX >= CoordBorder.MIN_X && coordX <= CoordBorder.MAX_X && coordY >= CoordBorder.MIN_Y && coordY <= CoordBorder.MAX_Y) {
         pinMain.style.top = coordY + 'px';
         pinMain.style.left = coordX + 'px';
         inputAddress.value = 'x: ' + coordX + ', y: ' + (coordY + PIN_MAIN_HEIGHT / 2 + MAIN_ARROW_HEIGHT);

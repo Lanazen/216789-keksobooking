@@ -16,15 +16,17 @@
   var pinsContainer = document.querySelector('.map__pins');
   var pinMain = map.querySelector('.map__pin--main');
   var filterForm = map.querySelector('.map__filters');
+  var filter = filterForm.querySelector('.map__filter');
+  var data = filter.name.substr(8);
 
   // Полная копия массива данных перед началом каждой фильтрации
   var loadedOffers = [];
 
   // Функция применяет фильтр к полям выбора типа жилья, количества комнат и гостей
-  var selectFilter = function (filter, data) {
-    if (filter.value !== 'any') {
+  var selectFilter = function (option) {
+    if (option.value !== 'any') {
       loadedOffers = loadedOffers.filter(function (object) {
-        return object.offer[data].toString() === filter.value;
+        return object.offer[data].toString() === option.value;
       });
     }
   };
@@ -45,7 +47,7 @@
 
   // Функция применяет фильтр к выбору удобств
   var checkboxFilter = function (checkbox) {
-    checkbox.forEach(function (item) {
+    [].forEach.call(checkbox, function (item) {
       if (item.checked) {
         loadedOffers = loadedOffers.filter(function (object) {
           return object.offer.features.indexOf(item.value) !== -1;
