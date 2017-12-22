@@ -5,6 +5,8 @@
   var DATA_TYPE = 'json';
   var TIMEOUT = 10000;
   var STATUS_SUCCESS = 200;
+  var ERROR_MESSAGE = 'Произошла ошибка соединения';
+  var TIMEOUT_MESSAGE = 'Запрос не успел выполниться за ';
 
   var setup = function (onLoad, onError) {
     var xhr = new XMLHttpRequest();
@@ -19,10 +21,10 @@
       }
     });
     xhr.addEventListener('error', function () {
-      onError('Произошла ошибка соединения');
+      onError(ERROR_MESSAGE);
     });
     xhr.addEventListener('timeout', function () {
-      onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
+      onError(TIMEOUT_MESSAGE + xhr.timeout + ' мс');
     });
 
     return xhr;

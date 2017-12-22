@@ -6,6 +6,7 @@
 
   var PIN_MAIN_HEIGHT = 68;
   var MAIN_ARROW_HEIGHT = 22;
+  var FORM_ERROR_MESSAGE = 'Произошла ошибка';
   var houseTypeMinPrice = {
     bungalo: '0',
     flat: '1000',
@@ -34,7 +35,6 @@
   var numberOfGuests = selectCapacity.querySelectorAll('option');
   var map = document.querySelector('.map');
   var pinMain = map.querySelector('.map__pin--main');
-  var errorMessage = 'Произошла ошибка';
   var startMainPinCoords = {
     addressX: pinMain.offsetLeft,
     addressY: pinMain.offsetTop + PIN_MAIN_HEIGHT / 2 + MAIN_ARROW_HEIGHT
@@ -150,7 +150,7 @@
   };
 
   var onErrorSend = function () {
-    window.error.showPopup(errorMessage);
+    window.error.showPopup(FORM_ERROR_MESSAGE);
   };
 
   var onButtonSubmit = function (evt) {

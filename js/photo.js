@@ -38,7 +38,7 @@
       var reader = new FileReader();
       reader.addEventListener('load', function () {
         var photo = document.createElement('img');
-        photo.style.width = '150px';
+        photo.style.width = '75px';
         photo.style.margin = '10px';
         photoContainer.appendChild(photo);
         photo.src = reader.result;
