@@ -64,25 +64,23 @@
   // Функция для применения фильтров и отрисовки подходящих пинов на карте
   var updatePins = function () {
     clearMap();
-    selectFilter(housingType, 'type');
-    selectFilter(housingRooms, 'rooms');
-    selectFilter(housingGuests, 'guests');
+    selectFilter(housingType);
+    selectFilter(housingRooms);
+    selectFilter(housingGuests);
     selectPriceFilter(housingPrice);
     selectCheckboxFilter(housingFeatures);
-    if (loadedOffers.length > MAX_PIN_AMOUNT) {
-      loadedOffers = loadedOffers.slice(0, MAX_PIN_AMOUNT);
-    } window.pin.render(loadedOffers);
+    loadedOffers = loadedOffers.slice(0, MAX_PIN_AMOUNT);
+    window.pin.render(loadedOffers);
   };
 
   window.filter = {
-    loadedData: [],
-    start: function (loadedData) {
-      this.loadedData = loadedData.slice();
+    loadedAds: [],
+    start: function (loadedAds) {
+      this.loadedAds = loadedAds.slice();
 
       // Функция-обработчик для применения фильтров
       function onSelectTypeChange() {
-        loadedOffers = window.filter.loadedData.slice();
-        updatePins();
+        loadedOffers = window.filter.loadedAds.slice();
         window.debounce(updatePins);
       }
 

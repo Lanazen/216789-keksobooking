@@ -33,15 +33,15 @@
   };
 
   // Функция делает страницу доступной для пользователя при успешной загрузки данных с сервера
-  var onSuccessLoad = function (loadedData) {
-    offers = loadedData;
+  var onSuccessLoad = function (loadedAds) {
+    offers = loadedAds;
     openMap();
-    window.filter.start(loadedData);
+    window.filter.start(loadedAds);
   };
 
   // Функция выводит сообщение при ошибке соединения
   var onErrorLoad = function (errorMessage) {
-    window.backend.handleError(errorMessage);
+    window.error.showPopup(errorMessage);
   };
 
   // Функция активации карты мышкой

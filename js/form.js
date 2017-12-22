@@ -146,7 +146,7 @@
   };
 
   var onErrorSend = function () {
-    window.backend.handleError(errorMessage);
+    window.error.showPopup(errorMessage);
   };
 
   var onButtonSubmit = function (evt) {
@@ -176,6 +176,35 @@
 
   // Отправка данных формы на сервер
   noticeForm.addEventListener('submit', onButtonSubmit);
+
+
+  // Загрузка аватарки пользователя
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+  var avatar = noticeForm.querySelector('.notice__preview img');
+  var avatarImage = document.querySelector('#avatar');
+
+  var upLoadImage = function (image) {
+    var file = image;
+    var fileName = file.name.toLowerCase();
+
+    var matches = FILE_TYPES.some(function (item) {
+      return fileName.endsWith(item);
+    });
+
+    if (matches) {
+      var reader = new FileReader();
+
+      reader.addEventListener('load', function () {
+        avatar.src = reader.result;
+      });
+
+      reader.readAsDataURL(file);
+    }
+  };
+
+  avatarImage.addEventListener('change', function () {
+    upLoadImage(avatarImage.files[0]);
+  });
 
   window.form = {
     setAddress: function (valueX, valueY) {
