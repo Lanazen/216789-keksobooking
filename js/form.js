@@ -140,6 +140,10 @@
 
   var onSuccessSend = function () {
     noticeForm.reset();
+    syncRoomGuests();
+    numberOfGuests[0].setAttribute('disabled', 'true');
+    numberOfGuests[1].setAttribute('disabled', 'true');
+    numberOfGuests[3].setAttribute('disabled', 'true');
     pinMain.style.top = startMainPinCoords.addressY + 'px';
     pinMain.style.left = startMainPinCoords.addressX + 'px';
     inputAddress.setAttribute('value', 'x: ' + startMainPinCoords.addressX + ', ' + 'y: ' + startMainPinCoords.addressY);
